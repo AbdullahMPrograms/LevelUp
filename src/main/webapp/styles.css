@@ -1,0 +1,419 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Auth Pages Styles */
+.login-container,
+.signup-container,
+.reset-container {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Auth Pages Body */
+.auth-page {
+    background-color: #f9fafb;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Dashboard Body */
+.dashboard-page {
+    display: flex;
+    background-color: #f9fafb;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Logo Styles */
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #f97316;
+    margin-bottom: 30px;
+}
+
+.auth-page .logo {
+    justify-content: center;
+    font-size: 28px;
+    gap: 10px;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #f97316;
+}
+
+/* Auth Button Styles */
+.login-button,
+.signup-button,
+.reset-button {
+    width: 100%;
+    padding: 12px;
+    background: #f97316;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.login-button:hover,
+.signup-button:hover,
+.reset-button:hover {
+    background: #fb923c;
+}
+
+/* Auth Link Styles */
+.forgot-password,
+.back-to-login {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password:hover,
+.back-to-login:hover {
+    color: #f97316;
+}
+
+/* Divider Styles */
+.divider {
+    margin: 24px 0;
+    border-top: 1px solid #e5e7eb;
+    position: relative;
+}
+
+.divider span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 0 10px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Sign Up/Login Link Styles */
+.signup-link,
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #4b5563;
+    font-size: 14px;
+}
+
+.signup-link a,
+.login-link a {
+    color: #f97316;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.signup-link a:hover,
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Forgot Password Specific Styles */
+.form-description {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+/* Dashboard Layout */
+.sidebar {
+    width: 250px;
+    background: white;
+    height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.sidebar-footer .nav-item {
+    color: #ef4444;
+}
+
+.sidebar-footer .nav-item:hover {
+    background-color: #fee2e2;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    height: 100vh;
+    max-height: 100vh;
+    
+}
+
+/* Navigation Styles */
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin: 4px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #4b5563;
+    transition: all 0.2s;
+    text-decoration: none;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.nav-item i {
+    width: 20px;
+    height: 20px;
+}
+
+.nav-item:hover {
+    background-color: #f3f4f6;
+}
+
+.nav-item.active {
+    background-color: #f97316;
+    color: white;
+}
+
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input {
+    padding: 8px 16px 8px 40px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    outline: none;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Dashboard Components */
+.banner {
+    background: linear-gradient(to right, #f97316, #fb923c);
+    padding: 24px;
+    border-radius: 12px;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    color: white;
+}
+
+.stat-card.workout { background: #06b6d4; }
+.stat-card.calories { background: #f97316; }
+.stat-card.steps { background: #a855f7; }
+
+.chart-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+.chart-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow-y: auto;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Layout Components */
+.left-column {
+    height: 100%;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Schedule Components */
+.schedule-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.schedule-day {
+    font-weight: 500;
+}
+
+.schedule-time {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.schedule-metric {
+    color: #f97316;
+}
+
+.schedule-list {
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* UI Components */
+.profile-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #d1d5db;
+}
+
+select {
+    padding: 4px 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+}
+
+/* Goals Section */
+.goals-container {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-top: 24px;
+}
+
+.goal-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+/* Utility Classes */
+.text-orange-500 {
+    color: #f97316;
+}
+
+.mt-1 {
+    margin-top: 4px;
+}
+
+.text-sm {
+    font-size: 14px;
+}
+
+.text-gray-500 {
+    color: #a5c0f7;
+}
+
+.error-message {
+    color: #dc2626;
+    text-align: center;
+    padding: 8px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    font-size: 14px;
+}
