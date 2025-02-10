@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Up! - Leaderboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <style>
+        .leaderboard-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th {
+            text-align: left;
+            padding: 12px;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+            font-weight: 500;
+        }
+
+        .leaderboard-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e7eb;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-date {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .level-badge {
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .strength-badge {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            width: 40px;
+            display: inline-block;
+        }
+
+        .strength-S { background: #fee2e2; color: #dc2626; }
+        .strength-A { background: #fef3c7; color: #d97706; }
+        .strength-B { background: #ecfccb; color: #65a30d; }
+        .strength-C { background: #e0f2fe; color: #0284c7; }
+        .strength-D { background: #f3e8ff; color: #7c3aed; }
+        .strength-E { background: #dcfce7; color: #16a34a; }
+
+        .stats-value {
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        .filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .filter-select {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #4b5563;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <div class="sidebar">
+        <div class="logo">Level Up!</div>
+        <nav>
+            <a href="index.html" class="nav-item">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Overview</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="dumbbell"></i>
+                <span>Workout</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="cookie"></i>
+                <span>Diet Plan</span>
+            </a>
+            <a href="leaderboard.html" class="nav-item active">
+                <i data-lucide="trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="target"></i>
+                <span>Goals</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>Schedule</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="login.html" class="nav-item">
+                <i data-lucide="log-out"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <div style="color: #6b7280">Leaderboard</div>
+                <div style="font-size: 20px; font-weight: 600">Top Performers</div>
+            </div>
+            <div class="user-menu">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search users...">
+                </div>
+                <div>🔔</div>
+                <div>⚙️</div>
+                <div class="profile-pic"></div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <select class="filter-select">
+                <option>All Time</option>
+                <option>This Week</option>
+                <option>This Month</option>
+                <option>This Year</option>
+            </select>
+            <select class="filter-select">
+                <option>All Categories</option>
+                <option>Level</option>
+                <option>Strength Rating</option>
+                <option>Steps</option>
+                <option>Calories</option>
+            </select>
+        </div>
+
+        <div class="leaderboard-card">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Level</th>
+                        <th>Strength</th>
+                        <th>Steps</th>
+                        <th>Calories</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="rank-cell">1.</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <div class="user-info">
+                                    <div class="user-name">Abdullah Malik</div>
+                                    <div class="user-date">Active 2h ago</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="level-badge">100</span></td>
+                        <td><span class="strength-badge strength-S">S</span></td>
+                        <td><span class="stats-value">12,458</span></td>
+                        <td><span class="stats-value">3,345</span></td>
+                    </tr>
+                    <tr>
+                        <td class="rank-cell">2.</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <div class="user-info">
+                                    <div class="user-name">Trevor Nice</div>
+                                    <div class="user-date">Active 5h ago</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="level-badge">96</span></td>
+                        <td><span class="strength-badge strength-A">A</span></td>
+                        <td><span class="stats-value">10,234</span></td>
+                        <td><span class="stats-value">2,987</span></td>
+                    </tr>
+                    <tr>
+                        <td class="rank-cell">3.</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <div class="user-info">
+                                    <div class="user-name">James Markham</div>
+                                    <div class="user-date">Active 1h ago</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="level-badge">21</span></td>
+                        <td><span class="strength-badge strength-B">B</span></td>
+                        <td><span class="stats-value">1,044</span></td>
+                        <td><span class="stats-value">915</span></td>
+                    </tr>
+                    <tr>
+                        <td class="rank-cell">4.</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <div class="user-info">
+                                    <div class="user-name">Saheer Multani</div>
+                                    <div class="user-date">Active 3h ago</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="level-badge">7</span></td>
+                        <td><span class="strength-badge strength-C">C</span></td>
+                        <td><span class="stats-value">8,543</span></td>
+                        <td><span class="stats-value">1,543</span></td>
+                    </tr>
+                    <tr>
+                        <td class="rank-cell">5.</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <div class="user-info">
+                                    <div class="user-name">Sung JinWoo</div>
+                                    <div class="user-date">Active 4h ago</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="level-badge">4</span></td>
+                        <td><span class="strength-badge strength-D">D</span></td>
+                        <td><span class="stats-value">1,000</span></td>
+                        <td><span class="stats-value">1,234</span></td>
+                    </tr>
+                    <tr>
+                        <td class="rank-cell">6.</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <div class="user-info">
+                                    <div class="user-name">Naruto Uzumaki</div>
+                                    <div class="user-date">Active 11h ago</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="level-badge">1</span></td>
+                        <td><span class="strength-badge strength-E">E</span></td>
+                        <td><span class="stats-value">1,000</span></td>
+                        <td><span class="stats-value">1,234</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
