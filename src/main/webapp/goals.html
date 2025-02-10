@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Up! - Goals</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .goals-list {
+            background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .goal-item {
+            background: white;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 2fr repeat(5, 1fr);
+            align-items: center;
+            gap: 16px;
+        }
+
+        .goal-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .goal-title {
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .goal-description {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .goal-metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .metric-label {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+        }
+
+        .trend-up { color: #22c55e; }
+        .trend-down { color: #ef4444; }
+
+        .view-button {
+            background: #f97316;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .view-button:hover {
+            background: #fb923c;
+        }
+
+        .edit-button {
+            color: #6b7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .add-goal-button {
+            background: #f97316;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-goal-button:hover {
+            background: #fb923c;
+        }
+
+        .context-menu {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .context-button {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #4b5563;
+            cursor: pointer;
+        }
+
+        .context-button.active {
+            background: #f97316;
+            color: white;
+            border-color: #f97316;
+        }
+
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <div class="sidebar">
+        <div class="logo">Level Up!</div>
+        <nav>
+            <a href="index.html" class="nav-item">
+                <i data-lucide="menu"></i>
+                <span>Overview</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Workout</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="cookie"></i>
+                <span>Diet Plan</span>
+            </a>
+            <a href="goals.html" class="nav-item active">
+                <i data-lucide="target"></i>
+                <span>Goals</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>My Schedule</span>
+            </a>
+            <a href="leaderboard.html" class="nav-item">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Leaderboard</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="login.html" class="nav-item">
+                <i data-lucide="log-out"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <div style="color: #6b7280">Goals</div>
+                <div style="font-size: 20px; font-weight: 600">Fitness Goals</div>
+            </div>
+            <div class="user-menu">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search goals...">
+                </div>
+                <div>🔔</div>
+                <div>⚙️</div>
+                <div class="profile-pic"></div>
+            </div>
+        </div>
+
+        <div class="page-header">
+            <div class="context-menu">
+                <button class="context-button active">All Goals</button>
+                <button class="context-button">Active</button>
+                <button class="context-button">Completed</button>
+            </div>
+            <button class="add-goal-button">
+                <i data-lucide="plus"></i>
+                Add New Goal
+            </button>
+        </div>
+
+        <div class="goals-list">
+            <div class="goal-item">
+                <div class="goal-info">
+                    <div class="goal-title">Weight Training Goal</div>
+                    <div class="goal-description">Target: October 10, 2024</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">150 lbs</div>
+                    <div class="metric-label">Target Weight</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">3x/week</div>
+                    <div class="metric-label">Frequency</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-trend trend-up">
+                        <i data-lucide="trending-up"></i>
+                        11%
+                    </div>
+                    <div class="metric-label">Progress</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">85%</div>
+                    <div class="metric-label">Completion</div>
+                </div>
+                <div class="action-buttons">
+                    <a href="#" class="view-button">View Item</a>
+                    <button class="edit-button">Edit</button>
+                </div>
+            </div>
+
+            <div class="goal-item">
+                <div class="goal-info">
+                    <div class="goal-title">Cardio Endurance</div>
+                    <div class="goal-description">Target: October 10, 2024</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">2k</div>
+                    <div class="metric-label">Distance</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">5x/week</div>
+                    <div class="metric-label">Frequency</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-trend trend-down">
+                        <i data-lucide="trending-down"></i>
+                        8%
+                    </div>
+                    <div class="metric-label">Progress</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">65%</div>
+                    <div class="metric-label">Completion</div>
+                </div>
+                <div class="action-buttons">
+                    <a href="#" class="view-button">View Item</a>
+                    <button class="edit-button">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
