@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level Up! - Leaderboard</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .leaderboard-card {
             background: white;
@@ -13,6 +13,8 @@
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             margin-bottom: 24px;
+            animation: slideIn 0.6s ease-out forwards;
+            opacity: 0; /* Start invisible */
         }
 
         .leaderboard-table {
@@ -74,12 +76,12 @@
             display: inline-block;
         }
 
-        .strength-S { background: #fee2e2; color: #dc2626; }
-        .strength-A { background: #fef3c7; color: #d97706; }
-        .strength-B { background: #ecfccb; color: #65a30d; }
-        .strength-C { background: #e0f2fe; color: #0284c7; }
-        .strength-D { background: #f3e8ff; color: #7c3aed; }
-        .strength-E { background: #dcfce7; color: #16a34a; }
+        .strength-S { background: #fee2e2; color: #dc2626; } /* Strong red */
+        .strength-A { background: #ffedd5; color: #ea580c; } /* Deep orange */
+        .strength-B { background: #fef3c7; color: #d97706; } /* Golden yellow */
+        .strength-C { background: #fef9c3; color: #ca8a04; } /* Yellow */
+        .strength-D { background: #ecfccb; color: #65a30d; } /* Light green */
+        .strength-E { background: #dcfce7; color: #16a34a; } /* Pale green */
 
         .stats-value {
             font-weight: 500;
@@ -100,6 +102,30 @@
             color: #4b5563;
             cursor: pointer;
         }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Add staggered animation for each row */
+        .leaderboard-table tbody tr {
+            opacity: 0;
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .leaderboard-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .leaderboard-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .leaderboard-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        .leaderboard-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        .leaderboard-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+        .leaderboard-table tbody tr:nth-child(6) { animation-delay: 0.6s; }
     </style>
 </head>
 <body class="dashboard-page">
@@ -107,20 +133,16 @@
         <div class="logo">Level Up!</div>
         <nav>
             <a href="index.html" class="nav-item">
-                <i data-lucide="layout-dashboard"></i>
+                <i data-lucide="menu"></i>
                 <span>Overview</span>
             </a>
             <a href="#" class="nav-item">
-                <i data-lucide="dumbbell"></i>
+                <i data-lucide="bar-chart-2"></i>
                 <span>Workout</span>
             </a>
             <a href="#" class="nav-item">
                 <i data-lucide="cookie"></i>
                 <span>Diet Plan</span>
-            </a>
-            <a href="leaderboard.html" class="nav-item active">
-                <i data-lucide="trophy"></i>
-                <span>Leaderboard</span>
             </a>
             <a href="#" class="nav-item">
                 <i data-lucide="target"></i>
@@ -128,7 +150,11 @@
             </a>
             <a href="#" class="nav-item">
                 <i data-lucide="calendar"></i>
-                <span>Schedule</span>
+                <span>My Schedule</span>
+            </a>
+            <a href="#" class="nav-item active">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Leaderboard</span>
             </a>
         </nav>
         <div class="sidebar-footer">
@@ -229,8 +255,8 @@
                         </td>
                         <td><span class="level-badge">21</span></td>
                         <td><span class="strength-badge strength-B">B</span></td>
-                        <td><span class="stats-value">1,044</span></td>
-                        <td><span class="stats-value">915</span></td>
+                        <td><span class="stats-value">8,543</span></td>
+                        <td><span class="stats-value">1,543</span></td>
                     </tr>
                     <tr>
                         <td class="rank-cell">4.</td>
@@ -245,8 +271,8 @@
                         </td>
                         <td><span class="level-badge">7</span></td>
                         <td><span class="strength-badge strength-C">C</span></td>
-                        <td><span class="stats-value">8,543</span></td>
-                        <td><span class="stats-value">1,543</span></td>
+                        <td><span class="stats-value">1,044</span></td>
+                        <td><span class="stats-value">915</span></td>
                     </tr>
                     <tr>
                         <td class="rank-cell">5.</td>
@@ -262,7 +288,7 @@
                         <td><span class="level-badge">4</span></td>
                         <td><span class="strength-badge strength-D">D</span></td>
                         <td><span class="stats-value">1,000</span></td>
-                        <td><span class="stats-value">1,234</span></td>
+                        <td><span class="stats-value">716</span></td>
                     </tr>
                     <tr>
                         <td class="rank-cell">6.</td>
@@ -277,8 +303,8 @@
                         </td>
                         <td><span class="level-badge">1</span></td>
                         <td><span class="strength-badge strength-E">E</span></td>
-                        <td><span class="stats-value">1,000</span></td>
-                        <td><span class="stats-value">1,234</span></td>
+                        <td><span class="stats-value">656</span></td>
+                        <td><span class="stats-value">512</span></td>
                     </tr>
                 </tbody>
             </table>
