@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule - Level Up!</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .month-selector {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-button:hover {
+            background-color: #f3f4f6;
+        }
+
+        .view-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-button {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-button.active {
+            background: #f97316;
+            color: white;
+            border-color: #f97316;
+        }
+
+        .calendar-grid {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .calendar-header-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: 500;
+            color: #4b5563;
+            padding-bottom: 16px;
+        }
+
+        .calendar-body {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-cell {
+            min-height: 100px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 8px;
+            position: relative;
+        }
+
+        .calendar-cell span {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: #6b7280;
+        }
+
+        .calendar-cell.disabled {
+            background: #f9fafb;
+        }
+
+        .calendar-cell.today {
+            border-color: #f97316;
+            background-color: #fff7ed;
+        }
+
+        .workout-item {
+            margin-top: 24px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: white;
+        }
+
+        .workout-item.strength {
+            background: #06b6d4;
+        }
+
+        .workout-item.cardio {
+            background: #f97316;
+        }
+
+        .workout-item.yoga {
+            background: #a855f7;
+        }
+
+        .workout-item.rest {
+            background: #6b7280;
+        }
+
+        /* Upcoming Workouts Section */
+        .upcoming-workouts {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .workout-list {
+            margin-top: 16px;
+        }
+
+        .workout-card {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .workout-time {
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .workout-info {
+            flex: 1;
+        }
+
+        .workout-info h4 {
+            margin: 0;
+            color: #111827;
+        }
+
+        .workout-info p {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .workout-status {
+            padding: 4px 12px;
+            background: #fee2e2;
+            color: #ef4444;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        @media (min-height: 900px) {
+            .calendar-cell {
+                min-height: 120px;
+            }
+        }
+
+        @media (max-height: 900px) {
+            .calendar-cell {
+                min-height: 90px;
+            }
+            
+            .workout-item {
+                margin-top: 20px;
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <div class="sidebar">
+        <div class="logo">Level Up!</div>
+        <nav>
+            <a href="index.html" class="nav-item">
+                <i data-lucide="menu"></i>
+                <span>Overview</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Workout</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="cookie"></i>
+                <span>Diet Plan</span>
+            </a>
+            <a href="goals.html" class="nav-item">
+                <i data-lucide="target"></i>
+                <span>Goals</span>
+            </a>
+            <a href="schedule.html" class="nav-item active">
+                <i data-lucide="calendar"></i>
+                <span>My Schedule</span>
+            </a>
+            <a href="leaderboard.html" class="nav-item">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Leaderboard</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="login.html" class="nav-item">
+                <i data-lucide="log-out"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <div style="color: #6b7280">My Schedule</div>
+                <div style="font-size: 20px; font-weight: 600">Workout Plan</div>
+            </div>
+            <div class="user-menu">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div>🔔</div>
+                <div>⚙️</div>
+                <div class="profile-pic"></div>
+            </div>
+        </div>
+
+        <div class="calendar-header">
+            <div class="month-selector">
+                <button class="nav-button"><i data-lucide="chevron-left"></i></button>
+                <h2>February 2025</h2>
+                <button class="nav-button"><i data-lucide="chevron-right"></i></button>
+            </div>
+            <div class="view-selector">
+                <button class="view-button active">Month</button>
+                <button class="view-button">Week</button>
+                <button class="view-button">Day</button>
+            </div>
+        </div>
+
+        <div class="calendar-grid">
+            <div class="calendar-header-row">
+                <div>Monday</div>
+                <div>Tuesday</div>
+                <div>Wednesday</div>
+                <div>Thursday</div>
+                <div>Friday</div>
+                <div>Saturday</div>
+                <div>Sunday</div>
+            </div>
+            <div class="calendar-body">
+                <!-- Week 1 -->
+                <div class="calendar-cell disabled"><span>27</span></div>
+                <div class="calendar-cell disabled"><span>28</span></div>
+                <div class="calendar-cell disabled"><span>29</span></div>
+                <div class="calendar-cell disabled"><span>30</span></div>
+                <div class="calendar-cell disabled"><span>31</span></div>
+                <div class="calendar-cell">
+                    <span>1</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>2</span>
+                    <div class="workout-item cardio">Running</div>
+                </div>
+
+                <!-- Week 2 -->
+                <div class="calendar-cell">
+                    <span>3</span>
+                    <div class="workout-item strength">Upper Body</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>4</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>5</span>
+                    <div class="workout-item strength">Lower Body</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>6</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>7</span>
+                    <div class="workout-item strength">Legs</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>8</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>9</span>
+                    <div class="workout-item cardio">Running</div>
+                </div>
+
+                <!-- Week 3 -->
+                <div class="calendar-cell today">
+                    <span>10</span>
+                    <div class="workout-item strength">Upper Body</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>11</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>12</span>
+                    <div class="workout-item strength">Lower Body</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>13</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>14</span>
+                    <div class="workout-item strength">Legs</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>15</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>16</span>
+                    <div class="workout-item cardio">Running</div>
+                </div>
+
+                <!-- Week 4 -->
+                <div class="calendar-cell">
+                    <span>17</span>
+                    <div class="workout-item strength">Upper Body</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>18</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>19</span>
+                    <div class="workout-item strength">Lower Body</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>20</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>21</span>
+                    <div class="workout-item strength">Legs</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>22</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>23</span>
+                    <div class="workout-item cardio">Running</div>
+                </div>
+
+                <!-- Week 5 -->
+                <div class="calendar-cell">
+                    <span>24</span>
+                    <div class="workout-item strength">Upper Body</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>25</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>26</span>
+                    <div class="workout-item strength">Lower Body</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>27</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>28</span>
+                    <div class="workout-item strength">Legs</div>
+                </div>
+                <div class="calendar-cell disabled"><span>1</span></div>
+                <div class="calendar-cell disabled"><span>2</span></div>
+            </div>
+        </div>
+
+        <div class="upcoming-workouts">
+            <h3>Upcoming Workouts</h3>
+            <div class="workout-list">
+                <div class="workout-card">
+                    <div class="workout-time">6:00 PM</div>
+                    <div class="workout-info">
+                        <h4>Upper Body</h4>
+                        <p>Upper Body Focus - 120 mins</p>
+                    </div>
+                    <div class="workout-status">Today</div>
+                </div>
+                <div class="workout-card">
+                    <div class="workout-time">8:00 PM</div>
+                    <div class="workout-info">
+                        <h4>Lower Body</h4>
+                        <p>Upper Body Focus - 120 mins</p>
+                    </div>
+                    <div class="workout-status">Wednesday</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Add click handlers for navigation items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.nav-item.active').classList.remove('active');
+                item.classList.add('active');
+            });
+        });
+
+        // View selector handlers
+        document.querySelectorAll('.view-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelector('.view-button.active').classList.remove('active');
+                button.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

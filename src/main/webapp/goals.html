@@ -11,6 +11,9 @@
             background: transparent;
             border-radius: 12px;
             overflow: hidden;
+            opacity: 0;
+            animation: slideIn 0.4s ease-out forwards;
+            animation-delay: 0.2s;
         }
 
         .goal-item {
@@ -23,6 +26,8 @@
             grid-template-columns: 2fr repeat(5, 1fr);
             align-items: center;
             gap: 16px;
+            opacity: 0;
+            animation: slideIn 0.3s ease-out forwards;
         }
 
         .goal-info {
@@ -154,6 +159,24 @@
             border-radius: 8px;
             width: 300px;
         }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(25px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Staggered animation for goal items */
+        .goal-item:nth-child(1) { animation-delay: 0.10s; }
+        .goal-item:nth-child(2) { animation-delay: 0.20s; }
+        .goal-item:nth-child(3) { animation-delay: 0.30s; }
+        .goal-item:nth-child(4) { animation-delay: 0.40s; }
+        .goal-item:nth-child(5) { animation-delay: 0.50s; }
     </style>
 </head>
 <body class="dashboard-page">
@@ -176,7 +199,7 @@
                 <i data-lucide="target"></i>
                 <span>Goals</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="schedule.html" class="nav-item">
                 <i data-lucide="calendar"></i>
                 <span>My Schedule</span>
             </a>
