@@ -13,8 +13,8 @@
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             margin-bottom: 24px;
-            animation: slideIn 0.4s ease-out forwards; /* Increased from 0.3s to 0.4s */
-            opacity: 0; /* Start invisible */
+            animation: slideIn 0.4s ease-out forwards;
+            opacity: 0;
         }
 
         .leaderboard-table {
@@ -114,19 +114,21 @@
             }
         }
 
-        /* Slightly slower row animations */
         .leaderboard-table tbody tr {
             opacity: 0;
             animation: slideIn 0.3s ease-out forwards;
         }
 
-        /* Adjusted delays between rows */
         .leaderboard-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
         .leaderboard-table tbody tr:nth-child(2) { animation-delay: 0.13s; }
         .leaderboard-table tbody tr:nth-child(3) { animation-delay: 0.21s; }
         .leaderboard-table tbody tr:nth-child(4) { animation-delay: 0.29s; }
         .leaderboard-table tbody tr:nth-child(5) { animation-delay: 0.37s; }
         .leaderboard-table tbody tr:nth-child(6) { animation-delay: 0.45s; }
+        .leaderboard-table tbody tr:nth-child(7) { animation-delay: 0.53s; }
+        .leaderboard-table tbody tr:nth-child(8) { animation-delay: 0.61s; }
+        .leaderboard-table tbody tr:nth-child(9) { animation-delay: 0.69s; }
+        .leaderboard-table tbody tr:nth-child(10) { animation-delay: 0.77s; }
     </style>
 </head>
 <body class="dashboard-page">
@@ -138,7 +140,7 @@
                 <span>Overview</span>
             </a>
             <a href="#" class="nav-item">
-                <i data-lucide="bar-chart-2"></i>
+                <i data-lucide="dumbbell"></i>
                 <span>Workout</span>
             </a>
             <a href="#" class="nav-item">
@@ -307,6 +309,8 @@
                         <td><span class="stats-value">656</span></td>
                         <td><span class="stats-value">512</span></td>
                     </tr>
+                    
+                    
                 </tbody>
             </table>
         </div>
