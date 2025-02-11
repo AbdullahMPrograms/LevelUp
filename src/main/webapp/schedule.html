@@ -156,6 +156,19 @@
             margin-bottom: 12px;
             opacity: 0;
             animation: slideIn 0.3s ease-out forwards;
+            border-left: 4px solid transparent;
+        }
+
+        .workout-card.strength {
+            border-left-color: #06b6d4;
+        }
+
+        .workout-card.cardio {
+            border-left-color: #f97316;
+        }
+
+        .workout-card.yoga {
+            border-left-color: #a855f7;
         }
 
         .workout-time {
@@ -313,11 +326,12 @@
                 <!-- Week 2 -->
                 <div class="calendar-cell">
                     <span>2</span>
+                    <div class="workout-item yoga">Stretching Exercises</div>
                     <div class="workout-item cardio">Running</div>
                 </div>
                 <div class="calendar-cell">
                     <span>3</span>
-                    <div class="workout-item strength">Upper Body</div>
+                    <div class="workout-item strength">Push</div>
                 </div>
                 <div class="calendar-cell">
                     <span>4</span>
@@ -325,7 +339,7 @@
                 </div>
                 <div class="calendar-cell">
                     <span>5</span>
-                    <div class="workout-item strength">Lower Body</div>
+                    <div class="workout-item strength">Pull</div>
                 </div>
                 <div class="calendar-cell">
                     <span>6</span>
@@ -343,11 +357,12 @@
                 <!-- Week 3 -->
                 <div class="calendar-cell">
                     <span>9</span>
+                    <div class="workout-item yoga">Stretching Excersizes</div>
                     <div class="workout-item cardio">Running</div>
                 </div>
                 <div class="calendar-cell today">
                     <span>10</span>
-                    <div class="workout-item strength">Upper Body</div>
+                    <div class="workout-item strength">Push</div>
                 </div>
                 <div class="calendar-cell">
                     <span>11</span>
@@ -355,7 +370,7 @@
                 </div>
                 <div class="calendar-cell">
                     <span>12</span>
-                    <div class="workout-item strength">Lower Body</div>
+                    <div class="workout-item strength">Pull</div>
                 </div>
                 <div class="calendar-cell">
                     <span>13</span>
@@ -373,11 +388,12 @@
                 <!-- Week 4 -->
                 <div class="calendar-cell">
                     <span>16</span>
+                    <div class="workout-item yoga">Stretching Exercises</div>
                     <div class="workout-item cardio">Running</div>
                 </div>
                 <div class="calendar-cell">
                     <span>17</span>
-                    <div class="workout-item strength">Upper Body</div>
+                    <div class="workout-item strength">Push</div>
                 </div>
                 <div class="calendar-cell">
                     <span>18</span>
@@ -385,7 +401,7 @@
                 </div>
                 <div class="calendar-cell">
                     <span>19</span>
-                    <div class="workout-item strength">Lower Body</div>
+                    <div class="workout-item strength">Pull</div>
                 </div>
                 <div class="calendar-cell">
                     <span>20</span>
@@ -403,11 +419,12 @@
                 <!-- Week 5 -->
                 <div class="calendar-cell">
                     <span>23</span>
+                    <div class="workout-item yoga">Stretching Exercises</div>
                     <div class="workout-item cardio">Running</div>
                 </div>
                 <div class="calendar-cell">
                     <span>24</span>
-                    <div class="workout-item strength">Upper Body</div>
+                    <div class="workout-item strength">Push</div>
                 </div>
                 <div class="calendar-cell">
                     <span>25</span>
@@ -415,7 +432,7 @@
                 </div>
                 <div class="calendar-cell">
                     <span>26</span>
-                    <div class="workout-item strength">Lower Body</div>
+                    <div class="workout-item strength">Pull</div>
                 </div>
                 <div class="calendar-cell">
                     <span>27</span>
@@ -432,21 +449,29 @@
         <div class="upcoming-workouts">
             <h3>Upcoming Workouts</h3>
             <div class="workout-list">
-                <div class="workout-card">
+                <div class="workout-card strength">
                     <div class="workout-time">6:00 PM</div>
                     <div class="workout-info">
-                        <h4>Upper Body</h4>
-                        <p>Upper Body Focus - 120 mins</p>
+                        <h4>Push</h4>
+                        <p>Strength Training - 120 mins</p>
                     </div>
                     <div class="workout-status">Today</div>
                 </div>
-                <div class="workout-card">
+                <div class="workout-card strength">
                     <div class="workout-time">8:00 PM</div>
                     <div class="workout-info">
-                        <h4>Lower Body</h4>
-                        <p>Upper Body Focus - 120 mins</p>
+                        <h4>Pull</h4>
+                        <p>Strength Training - 120 mins</p>
                     </div>
                     <div class="workout-status">Wednesday</div>
+                </div>
+                <div class="workout-card strength">
+                    <div class="workout-time">8:00 PM</div>
+                    <div class="workout-info">
+                        <h4>Legs</h4>
+                        <p>Strength Training - 120 mins</p>
+                    </div>
+                    <div class="workout-status">Friday</div>
                 </div>
             </div>
         </div>
