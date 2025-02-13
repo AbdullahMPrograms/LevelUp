@@ -726,45 +726,56 @@
                 allSlideouts.forEach(s => {
                     if (s !== slideout) s.classList.remove('open');
                 });
+
+                if (isOpen) {
+                    setTimeout(() => {
+                        this.initializeChart(slideout);
+                    }, 0);
+                }
             },
 
             initializeChart(slideout) {
                 const canvas = slideout.querySelector('canvas');
-                if (!canvas.__chart) {
-                    const ctx = canvas.getContext('2d');
-                    canvas.__chart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                            datasets: [{
-                                label: 'Progress',
-                                data: [30, 45, 55, 60, 75, 85],
-                                borderColor: '#f97316',
-                                tension: 0.4,
-                                fill: true,
-                                backgroundColor: 'rgba(249, 115, 22, 0.1)'
-                            }]
+                if (canvas.__chart) {
+                    canvas.__chart.update();
+                    return;
+                }
+
+                const ctx = canvas.getContext('2d');
+                canvas.__chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Progress',
+                            data: [30, 45, 55, 60, 75, 85],
+                            borderColor: '#f97316',
+                            tension: 0.4,
+                            fill: true,
+                            backgroundColor: 'rgba(249, 115, 22, 0.1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    display: false
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: 100,
-                                    ticks: {
-                                        callback: value => value + '%'
-                                    }
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: value => value + '%'
                                 }
                             }
                         }
-                    });
-                }
+                    }
+                });
+
+                canvas.__chart.resize();
             }
         };
         goalDetails.init();
