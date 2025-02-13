@@ -160,7 +160,7 @@
             width: 300px;
         }
 
-        .popup-overlay {
+        .flyout-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -174,7 +174,7 @@
             animation: fadeIn 0.2s ease-out;
         }
         
-        .popup-content {
+        .flyout-content {
             background: white;
             border-radius: 12px;
             width: 90%;
@@ -185,7 +185,7 @@
             animation: slideUp 0.3s ease-out;
         }
         
-        .popup-header {
+        .flyout-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -193,7 +193,7 @@
             border-bottom: 1px solid #e5e7eb;
         }
         
-        .popup-header h2 {
+        .flyout-header h2 {
             font-size: 20px;
             font-weight: 600;
             color: #1f2937;
@@ -337,6 +337,7 @@
         .goal-item:nth-child(3) { animation-delay: 0.30s; }
         .goal-item:nth-child(4) { animation-delay: 0.40s; }
         .goal-item:nth-child(5) { animation-delay: 0.50s; }
+
     </style>
 </head>
 <body class="dashboard-page">
@@ -435,6 +436,50 @@
                 </div>
             </div>
 
+            <div class="goal-detail-slideout" data-goal-id="1">
+                <div class="goal-detail-content">
+                    <div class="goal-detail-left">
+                        <div class="goal-detail-header">
+                            <div class="goal-detail-title">Weight Training Goal Details</div>
+                        </div>
+                        <div class="goal-progress-chart">
+                            <canvas id="progressChart1"></canvas>
+                        </div>
+                    </div>
+                    <div class="goal-detail-right">
+                        <div class="goal-description-section">
+                            <div class="section-title">Description</div>
+                            <div class="description-content">
+                                This goal focuses on improving strength through consistent weight training.
+                                The target is to achieve a specific weight lifting capacity while maintaining proper form.
+                            </div>
+                        </div>
+                        <div class="goal-metrics-list">
+                            <div class="detail-metric">
+                                <span class="metric-name">Start Date</span>
+                                <span class="metric-detail">Jan 1, 2025</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Target Date</span>
+                                <span class="metric-detail">Feb 28, 2025</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Current Progress</span>
+                                <span class="metric-detail">85%</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Frequency</span>
+                                <span class="metric-detail">3x/week</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Status</span>
+                                <span class="metric-detail">On Track</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="goal-item">
                 <div class="goal-info">
                     <div class="goal-title">Cardio Endurance</div>
@@ -464,14 +509,58 @@
                     <button class="edit-button">Edit</button>
                 </div>
             </div>
+
+            <div class="goal-detail-slideout" data-goal-id="1">
+                <div class="goal-detail-content">
+                    <div class="goal-detail-left">
+                        <div class="goal-detail-header">
+                            <div class="goal-detail-title">Cardio Endurance Goal Details</div>
+                        </div>
+                        <div class="goal-progress-chart">
+                            <canvas id="progressChart1"></canvas>
+                        </div>
+                    </div>
+                    <div class="goal-detail-right">
+                        <div class="goal-description-section">
+                            <div class="section-title">Description</div>
+                            <div class="description-content">
+                                This goal focuses on improving endurance through consistent cardio training.
+                                The target is to achieve a specific cardio endurance capacity while maintaining consistency.
+                            </div>
+                        </div>
+                        <div class="goal-metrics-list">
+                            <div class="detail-metric">
+                                <span class="metric-name">Start Date</span>
+                                <span class="metric-detail">Jan 1, 2025</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Target Date</span>
+                                <span class="metric-detail">Feb 28, 2025</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Current Progress</span>
+                                <span class="metric-detail">65%</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Frequency</span>
+                                <span class="metric-detail">5x/week</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Status</span>
+                                <span class="metric-detail">On Track</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="goalFormPopup" class="popup-overlay" style="display: none;">
-        <div class="popup-content">
-            <div class="popup-header">
+    <div id="goalFormflyout" class="flyout-overlay" style="display: none;">
+        <div class="flyout-content">
+            <div class="flyout-header">
                 <h2>Add New Goal</h2>
-                <button class="close-button" onclick="closePopup()">×</button>
+                <button class="close-button" onclick="closeflyout()">×</button>
             </div>
             <form id="addGoalForm" onsubmit="handleSubmit(event)">
                 <div class="form-group">
@@ -528,18 +617,19 @@
                 </div>
                 
                 <div class="form-actions">
-                    <button type="button" class="cancel-button" onclick="closePopup()">Cancel</button>
+                    <button type="button" class="cancel-button" onclick="closeflyout()">Cancel</button>
                     <button type="submit" class="submit-button">Create Goal</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         lucide.createIcons();
 
-        const goalpopup = {
-            element: document.getElementById('goalFormPopup'),
+        const goalflyout = {
+            element: document.getElementById('goalFormflyout'),
             form: document.getElementById('addGoalForm'),
             
             metrics: {
@@ -602,8 +692,82 @@
                 this.close();
             }
         };
-        
-        goalpopup.init();
+        goalflyout.init();
+
+        const goalDetails = {
+            init() {
+                document.querySelectorAll('.view-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const goalItem = button.closest('.goal-item');
+                        const slideout = goalItem.nextElementSibling;
+                        
+                        if (slideout.classList.contains('goal-detail-slideout')) {
+                            this.toggleSlideout(slideout);
+                            if (!slideout.classList.contains('open')) {
+                                this.initializeChart(slideout);
+                            }
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.minimize-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const slideout = button.closest('.goal-detail-slideout');
+                        this.toggleSlideout(slideout);
+                    });
+                });
+            },
+
+            toggleSlideout(slideout) {
+                const isOpen = slideout.classList.toggle('open');
+                const allSlideouts = document.querySelectorAll('.goal-detail-slideout');
+                
+                allSlideouts.forEach(s => {
+                    if (s !== slideout) s.classList.remove('open');
+                });
+            },
+
+            initializeChart(slideout) {
+                const canvas = slideout.querySelector('canvas');
+                if (!canvas.__chart) {
+                    const ctx = canvas.getContext('2d');
+                    canvas.__chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Progress',
+                                data: [30, 45, 55, 60, 75, 85],
+                                borderColor: '#f97316',
+                                tension: 0.4,
+                                fill: true,
+                                backgroundColor: 'rgba(249, 115, 22, 0.1)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: {
+                                        callback: value => value + '%'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        };
+        goalDetails.init();
     </script>
 </body>
 </html>

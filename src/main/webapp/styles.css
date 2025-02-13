@@ -392,6 +392,121 @@ select {
     margin-bottom: 12px;
 }
 
+/* Goal Detail Slideout */
+.goal-detail-slideout {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease-out;
+    background: white;
+    border-radius: 0 0 12px 12px;
+    margin-top: -16px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.goal-detail-slideout.open {
+    height: 400px;
+}
+
+.goal-detail-content {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    height: 400px;
+}
+
+.goal-detail-left {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.goal-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.goal-detail-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.minimize-button {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.minimize-button:hover {
+    color: #f97316;
+}
+
+.goal-progress-chart {
+    flex: 1;
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+}
+
+.goal-detail-right {
+    border-left: 1px solid #e5e7eb;
+    padding-left: 24px;
+}
+
+.goal-description-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.description-content {
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.goal-metrics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.detail-metric:last-child {
+    border-bottom: none;
+}
+
+.metric-name {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.metric-detail {
+    font-weight: 500;
+    color: #1f2937;
+}
+
 /* Utility Classes */
 .text-orange-500 {
     color: #f97316;
