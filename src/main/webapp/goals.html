@@ -160,6 +160,166 @@
             width: 300px;
         }
 
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        .popup-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .popup-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .close-button:hover {
+            color: #1f2937;
+        }
+        
+        #addGoalForm {
+            padding: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4b5563;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #6b7280;
+            transition: border-color 0.2s;
+        }        
+        
+        .input-with-unit {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .input-with-unit input {
+            flex: 2;
+        }
+        
+        .input-with-unit select {
+            flex: 1;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #f97316;
+            outline: none;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .cancel-button,
+        .submit-button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .cancel-button {
+            background: #f3f4f6;
+            border: none;
+            color: #4b5563;
+        }
+        
+        .cancel-button:hover {
+            background: #e5e7eb;
+        }
+        
+        .submit-button {
+            background: #f97316;
+            border: none;
+            color: white;
+        }
+        
+        .submit-button:hover {
+            background: #fb923c;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @keyframes slideIn {
             from {
                 transform: translateY(25px);
@@ -307,8 +467,143 @@
         </div>
     </div>
 
+    <div id="goalFormPopup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2>Add New Goal</h2>
+                <button class="close-button" onclick="closePopup()">×</button>
+            </div>
+            <form id="addGoalForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label>Goal Title</label>
+                    <input type="text" placeholder="e.g., Weight Training Goal" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Target Date</label>
+                    <input type="date" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Metric Type</label>
+                        <select id="metricType" onchange="updateMetricUnit()" required>
+                            <option value="">Select metric</option>
+                            <option value="weight">Weight</option>
+                            <option value="distance">Distance</option>
+                            <option value="time">Time</option>
+                            <option value="sets">Sets/Reps</option>
+                            <option value="calories">Calories</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group target-value-container">
+                        <label>Target Value</label>
+                        <div class="input-with-unit">
+                            <input type="text" id="targetValue" placeholder="Enter value" required>
+                            <select id="metricUnit" required>
+                                <option value="">Unit</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select required>
+                        <option value="">Select frequency</option>
+                        <option value="1x">1x per week</option>
+                        <option value="2x">2x per week</option>
+                        <option value="3x">3x per week</option>
+                        <option value="4x">4x per week</option>
+                        <option value="5x">5x per week</option>
+                        <option value="daily">Daily</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea placeholder="Add some details about your goal..." rows="3"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-button" onclick="closePopup()">Cancel</button>
+                    <button type="submit" class="submit-button">Create Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+
+        const goalpopup = {
+            element: document.getElementById('goalFormPopup'),
+            form: document.getElementById('addGoalForm'),
+            
+            metrics: {
+                weight: { units: ['lbs', 'kg'], default: 'lbs', placeholder: 'e.g., 150' },
+                distance: { units: ['km', 'mi', 'm'], default: 'km', placeholder: 'e.g., 5' },
+                time: { units: ['mins', 'hrs', 's'], default: 'minutes', placeholder: 'e.g., 30' },
+                sets: { units: ['reps', 'sets'], default: 'reps', placeholder: 'e.g., 12' },
+                calories: { units: ['kcal'], default: 'kcal', placeholder: 'e.g., 500' },
+                custom: { units: ['custom'], default: 'custom', placeholder: 'Enter value' }
+            },
+        
+            init() {
+                document.querySelector('.add-goal-button').addEventListener('click', () => this.open());
+                document.getElementById('metricType').addEventListener('change', () => this.updateMetric());
+                
+                document.querySelector('.close-button').addEventListener('click', () => this.close());
+                document.querySelector('.cancel-button').addEventListener('click', () => this.close());
+                
+                this.element.addEventListener('click', (e) => {
+                    if (e.target === this.element) this.close();
+                });
+                
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+            },
+        
+            updateMetric() {
+                const metricType = document.getElementById('metricType').value;
+                const metric = this.metrics[metricType];
+                
+                if (!metric) return;
+        
+                document.getElementById('targetValue').placeholder = metric.placeholder;
+        
+                // Update and auto-select unit
+                const unitSelect = document.getElementById('metricUnit');
+                unitSelect.innerHTML = metric.units
+                    .map(unit => `<option value="${unit}">${unit}</option>`)
+                    .join('');
+                unitSelect.value = metric.default;
+            },
+        
+            open() {
+                this.element.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            },
+        
+            close() {
+                this.element.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                this.form.reset();
+                
+                const unitSelect = document.getElementById('metricUnit');
+                unitSelect.innerHTML = '<option value="">Unit</option>';
+            },
+        
+            handleSubmit(event) {
+                event.preventDefault();
+                // Handle database here
+                // You got this Trevor!
+                this.close();
+            }
+        };
+        
+        goalpopup.init();
     </script>
 </body>
 </html>
