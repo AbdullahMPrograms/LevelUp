@@ -1,1 +1,4 @@
-com\mycompany\coe692project\LoginServlet.class
+Persistence/User_CRUD.class
+Business/SignUpServlet.class
+com/mycompany/coe692project/LoginServlet.class
+Helper/UserInfo.class
