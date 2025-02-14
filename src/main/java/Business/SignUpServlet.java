@@ -75,31 +75,49 @@ public class SignUpServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Read signup form information
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirm-password");
-        
-        //Create new UserInfo object
-        UserInfo newUser = new UserInfo();
-        
-        //If the password fields match
-        if(password == confirmPassword){
-            newUser.setUsername(name);
-            newUser.setEmail(email);
-            newUser.setPassword(password);
+        try {
+            //Read signup form information
+            String name = request.getParameter("name");
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            String confirmPassword = request.getParameter("confirm-password");
             
-            //Create new user in the DB
-            User_CRUD newUserCRUD = new User_CRUD();
-            newUserCRUD.create(newUser);
+            System.out.println("Received signup request for: " + name + " with email: " + email);
             
-        }
-        else{
+            //Create new UserInfo object
+            UserInfo newUser = new UserInfo();
+            
+            if(password.equals(confirmPassword)){
+                newUser.setUsername(name);
+                newUser.setEmail(email);
+                newUser.setPassword(password);
+                
+                User_CRUD newUserCRUD = new User_CRUD();
+                String result = newUserCRUD.create(newUser);
+                System.out.println("User creation result: " + result);
+                
+                if(result.equals("user creation success")){
+                    response.sendRedirect("login.html");
+                } else {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    PrintWriter out = response.getWriter();
+                    out.print("{\"error\": \"" + result + "\"}");
+                    out.flush();
+                }
+            } else {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                out.print("{\"error\": \"Passwords Do Not Match\"}");
+                out.flush();
+            }
+        } catch (Exception e) {
+            System.err.println("Servlet Error: " + e.getMessage());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
-            out.print("{\"error\": \"Passwords Do Not Match\"}");
+            out.print("{\"error\": \"Server error: " + e.getMessage() + "\"}");
             out.flush();
         }
     }

@@ -1,4 +1,4 @@
-Persistence/User_CRUD.class
-Business/SignUpServlet.class
-com/mycompany/coe692project/LoginServlet.class
-Helper/UserInfo.class
+Business\SignUpServlet.class
+Business\LoginServlet.class
+Helper\UserInfo.class
+Persistence\User_CRUD.class
