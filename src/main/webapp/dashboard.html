@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level Up!</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: slideIn 0.4s ease-out forwards;
+      animation-delay: 0.1s;
+    }
+    .stat-card {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .stat-card h3 {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 0 0 8px 0;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    .stat-trend {
+      margin-top: 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .trend-up { color: #22c55e; }
+    .trend-down { color: #ef4444; }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .chart-header h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #1f2937;
+    }
+    .chart-filters {
+      display: flex;
+      gap: 8px;
+    }
+    .filter-button {
+      padding: 6px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: white;
+      color: #6b7280;
+      cursor: pointer;
+    }
+    .filter-button.active {
+      background: #f97316;
+      color: white;
+      border-color: #f97316;
+    }
+
+    .chart-container {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .recent-activities {
+      margin-top: 24px;
+    }
+    .activity-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+    }
+    .activity-info {
+      flex: 1;
+    }
+    .activity-title {
+      font-weight: 500;
+      color: #1f2937;
+    }
+    .activity-time {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(25px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="dashboard-page">
+  <div class="sidebar">
+    <div class="logo">Level Up!</div>
+    <nav>
+      <a href="index.html" class="nav-item active">
+        <i data-lucide="menu"></i>
+        <span>Overview</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i data-lucide="dumbbell"></i>
+        <span>Workout</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i data-lucide="cookie"></i>
+        <span>Diet Plan</span>
+      </a>
+      <a href="goals.html" class="nav-item">
+        <i data-lucide="target"></i>
+        <span>Goals</span>
+      </a>
+      <a href="schedule.html" class="nav-item">
+        <i data-lucide="calendar"></i>
+        <span>My Schedule</span>
+      </a>
+      <a href="leaderboard.html" class="nav-item">
+        <i data-lucide="bar-chart-2"></i>
+        <span>Leaderboard</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="login.html" class="nav-item">
+        <i data-lucide="log-out"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <div>
+        <div style="color: #6b7280">Dashboard</div>
+        <div style="font-size: 20px; font-weight: 600">Welcome back, Abdullah!</div>
+      </div>
+      <div class="user-menu">
+        <div class="search-bar">
+          <input type="text" placeholder="Search...">
+        </div>
+        <div>🔔</div>
+        <div>⚙️</div>
+        <div class="profile-pic"></div>
+      </div>
+    </div>
+
+    <div class="quick-stats">
+      <div class="stat-card">
+        <h3>Today's Workout</h3>
+        <div class="stat-value">120 min</div>
+        <div class="stat-trend trend-up">
+          <i data-lucide="trending-up"></i>
+          15% vs last week
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Calories Burned</h3>
+        <div class="stat-value">850 kcal</div>
+        <div class="stat-trend trend-up">
+          <i data-lucide="trending-up"></i>
+          8% vs last week
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Active Goals</h3>
+        <div class="stat-value">4/5</div>
+        <div class="stat-trend trend-up">
+          <i data-lucide="trending-up"></i>
+          2 completed this week
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Leaderboard Rank</h3>
+        <div class="stat-value">#1</div>
+        <div class="stat-trend trend-up">
+          <i data-lucide="trending-up"></i>
+          Up 2 positions
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Workout Progress Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h2>Workout Progress</h2>
+            <div class="chart-filters">
+              <button class="filter-button">Week</button>
+              <button class="filter-button active">Month</button>
+              <button class="filter-button">Year</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="progressChart"></canvas>
+          </div>
+        </div>
+  
+        <!-- Right Column with Recent Activities and My Schedule -->
+        <div class="right-column">
+          <!-- Recent Activities -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h2>Recent Activities</h2>
+            </div>
+            <div class="recent-activities">
+              <div class="activity-item">
+                <div class="activity-icon" style="background: #e0f2fe;">
+                  <i data-lucide="dumbbell" style="color: #0ea5e9"></i>
+                </div>
+                <div class="activity-info">
+                  <div class="activity-title">Push Workout</div>
+                  <div class="activity-time">2 hours ago</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon" style="background: #fff7ed;">
+                  <i data-lucide="target" style="color: #f97316"></i>
+                </div>
+                <div class="activity-info">
+                  <div class="activity-title">Goal Achieved</div>
+                  <div class="activity-time">Yesterday</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon" style="background: #fef3f2;">
+                  <i data-lucide="heart" style="color: #ef4444"></i>
+                </div>
+                <div class="activity-info">
+                  <div class="activity-title">Cardio Session</div>
+                  <div class="activity-time">2 days ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- My Schedule -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h2>My Schedule</h2>
+              <a href="schedule.html" class="view-all-link">View all</a>
+            </div>
+            <div class="schedule-preview">
+              <div class="schedule-item">
+                <div class="schedule-info">
+                  <div class="schedule-title">Push Workout</div>
+                  <div class="schedule-time">Today at 6:00 PM</div>
+                </div>
+                <div class="schedule-badge today">Today</div>
+              </div>
+              <div class="schedule-item">
+                <div class="schedule-info">
+                  <div class="schedule-title">Pull Workout</div>
+                  <div class="schedule-time">Wed at 8:00 PM</div>
+                </div>
+                <div class="schedule-badge upcoming">Next</div>
+              </div>
+              <div class="schedule-item">
+                <div class="schedule-info">
+                  <div class="schedule-title">Legs</div>
+                  <div class="schedule-time">Fri at 8:00 PM</div>
+                </div>
+                <div class="schedule-badge upcoming">Coming up</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <h2>Diet Plan Progress</h2>
+        <div class="chart-filters">
+          <button class="filter-button active">Today</button>
+          <button class="filter-button">Week</button>
+          <button class="filter-button">Month</button>
+        </div>
+      </div>
+      <div class="diet-stats">
+        <div class="stat-box">
+          <div class="stat-box-header">
+            <div class="stat-box-icon calories">
+              <i data-lucide="flame"></i>
+            </div>
+            <div class="stat-box-title">
+              <h3>Calories</h3>
+              <span>Daily Goal: 2,000 kcal</span>
+            </div>
+          </div>
+          <div class="stat-box-progress">
+            <div class="progress-bar">
+              <div class="progress calories-progress" style="width: 75%"></div>
+            </div>
+            <div class="stat-box-values">
+              <span>1,500 kcal</span>
+              <span class="percentage">75%</span>
+            </div>
+          </div>
+        </div>
+    
+        <div class="stat-box">
+          <div class="stat-box-header">
+            <div class="stat-box-icon protein">
+              <i data-lucide="beef"></i>
+            </div>
+            <div class="stat-box-title">
+              <h3>Protein</h3>
+              <span>Daily Goal: 150g</span>
+            </div>
+          </div>
+          <div class="stat-box-progress">
+            <div class="progress-bar">
+              <div class="progress protein-progress" style="width: 80%"></div>
+            </div>
+            <div class="stat-box-values">
+              <span>120g</span>
+              <span class="percentage">80%</span>
+            </div>
+          </div>
+        </div>
+    
+        <div class="stat-box">
+          <div class="stat-box-header">
+            <div class="stat-box-icon carbs">
+              <i data-lucide="cookie"></i>
+            </div>
+            <div class="stat-box-title">
+              <h3>Carbs</h3>
+              <span>Daily Goal: 300g</span>
+            </div>
+          </div>
+          <div class="stat-box-progress">
+            <div class="progress-bar">
+              <div class="progress carbs-progress" style="width: 60%"></div>
+            </div>
+            <div class="stat-box-values">
+              <span>180g</span>
+              <span class="percentage">60%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+  <script>
+    // Initialize the Workout Progress chart
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+          {
+            label: 'Workout',
+            data: [50, 45, 75, 82, 35, 65, 85],
+            backgroundColor: '#06b6d4',
+            borderRadius: 4
+          },
+          {
+            label: 'Calories',
+            data: [85, 80, 90, 95, 75, 90, 87],
+            backgroundColor: '#f97316',
+            borderRadius: 4
+          },
+          {
+            label: 'Steps',
+            data: [95, 82, 85, 80, 90, 75, 72],
+            backgroundColor: '#a855f7',
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 20,
+              boxWidth: 6
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false }
+          },
+          y: {
+            display: true,
+            max: 100,
+            min: 0,
+            grid: { display: true, color: '#e5e7eb' },
+            ticks: {
+              stepSize: 20,
+              callback: function(value) { return value + '%'; }
+            }
+          }
+        }
+      }
+    });
+
+    // Navigation item click handlers
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelector('.nav-item.active').classList.remove('active');
+        item.classList.add('active');
+      });
+    });
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
