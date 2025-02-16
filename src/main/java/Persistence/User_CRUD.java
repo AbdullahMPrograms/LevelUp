@@ -20,7 +20,7 @@ public class User_CRUD {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String url = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
             String user = "root";
-            String password = "261331";
+            String password = "student123";
             
             System.out.println("Attempting to connect to database...");
             Connection con = DriverManager.getConnection(url, user, password);
@@ -35,23 +35,29 @@ public class User_CRUD {
         }
     }
 
-    public static UserInfo read(String username, String password){
+    public static UserInfo read(String email, String password){
+        //Default to null if no user is found
         UserInfo bean = null;
 
         try{
             Connection con = getCon();
 
-            String q = "SELECT * FROM USER WHERE USER_NAME LIKE " + username;
-
-            PreparedStatement ps=con.prepareStatement(q);
-            ResultSet rs = ps.executeQuery();
+            String q = "Select * FROM `USER` WHERE EMAIL = ?";
+            PreparedStatement stmt = con.prepareStatement(q);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            
+            //If there is a user with the matching email
             if(rs.next()){
-                //bean = new UserInfo();
+                bean = new UserInfo();
                 int userID = rs.getInt("USER_ID");
                 String userName = rs.getString("USER_NAME");
                 String passWord = rs.getString("PASSWORD");
-                String email = rs.getString("EMAIL");
-
+                String uemail = rs.getString("EMAIL");
+                bean.setUserID(userID);
+                bean.setUsername(userName);
+                bean.setPassword(passWord);
+                bean.setEmail(uemail);
             }
             con.close();
         }

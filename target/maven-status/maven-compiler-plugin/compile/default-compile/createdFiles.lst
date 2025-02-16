@@ -1,4 +1,6 @@
 Business\SignUpServlet.class
 Business\LoginServlet.class
+Helper\GoalInfo.class
 Helper\UserInfo.class
+Business\GoalServlet.class
 Persistence\User_CRUD.class

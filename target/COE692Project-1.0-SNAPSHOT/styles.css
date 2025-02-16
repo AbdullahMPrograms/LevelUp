@@ -329,11 +329,10 @@
 }
 
 .right-column {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 1fr 1fr; /* Equal height for both cards */
     gap: 24px;
     height: 100%;
-    overflow-y: auto;
 }
 
 /* Schedule Components */
@@ -531,4 +530,150 @@ select {
     margin-bottom: 16px;
     border-radius: 4px;
     font-size: 14px;
+}
+
+/* Add these new styles at the end of the file */
+.view-all-link {
+    color: #f97316;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}
+
+.schedule-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.schedule-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.schedule-info .schedule-title {
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.schedule-info .schedule-time {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.schedule-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.schedule-badge.upcoming {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Diet Plan Card Styles */
+.diet-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding: 24px 0;
+}
+
+.stat-box {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.2s;
+}
+
+.stat-box:hover {
+    transform: translateY(-2px);
+}
+
+.stat-box-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.stat-box-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-box-icon.calories {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.stat-box-icon.protein {
+    background: #e0f2fe;
+    color: #06b6d4;
+}
+
+.stat-box-icon.carbs {
+    background: #fff7ed;
+    color: #f97316;
+}
+
+.stat-box-title h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #1f2937;
+}
+
+.stat-box-title span {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.stat-box-progress {
+    margin-top: 12px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.calories-progress { background: #ef4444; }
+.protein-progress { background: #06b6d4; }
+.carbs-progress { background: #f97316; }
+
+.stat-box-values {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.percentage {
+    font-weight: 500;
+    color: #1f2937;
 }

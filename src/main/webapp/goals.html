@@ -689,7 +689,43 @@
                 event.preventDefault();
                 // Handle database here
                 // You got this Trevor!
-                this.close();
+                const form = event.target;
+                const formData = new FormData(form);
+
+                //Convert formdata to url encoded string
+                const data = new URLSearchParams(formData).toString();
+
+                fetch('GoalServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return Promise.reject('Redirecting...');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const errorDiv = document.getElementById('errorMessage');
+                    if (data && data.error) {
+                        errorDiv.textContent = data.error;
+                        errorDiv.style.display = 'block';
+                        errorDiv.className = 'error-message';
+                    } else {
+                        errorDiv.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    if (error !== 'Redirecting...') {
+                        console.error('Error:', error);
+                    }
+                });
+        
+                return false;
             }
         };
         goalflyout.init();
