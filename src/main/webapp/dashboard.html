@@ -87,13 +87,21 @@
       justify-content: center;
     }
     .recent-activities {
-      margin-top: 24px;
+      margin-top: 24px;  /* Match My Schedule spacing from header to first item */
     }
     .activity-item {
       display: flex;
       align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 16px;  /* Increase padding to match schedule items */
+      margin-bottom: 12px;  /* Increase space between items to match schedule spacing */
+      border-radius: 8px;
+      background-color: white;
+      border: 1px solid #e5e7eb;
+    }
+    
+    /* Make sure the last activity item doesn't have a bottom margin */
+    .activity-item:last-child {
+      margin-bottom: 0;
     }
     .activity-icon {
       width: 40px;
