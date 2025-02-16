@@ -11,6 +11,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.tools.ant.types.resources.selectors.Date;
+
+import Helper.GoalInfo;
+import Persistence.Goal_CRUD;
 
 /**
  *
@@ -71,7 +77,31 @@ public class GoalServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String title = request.getParameter("title");
+        String date = request.getParameter("date");
+        String metricType = request.getParameter("metricType");
+        String targetValue = request.getParameter("targetValue");
+        String targetUnit = request.getParameter("metricUnit");
+        String frequency = request.getParameter("frequency");
+        String description = request.getParameter("description");
+        HttpSession session = request.getSession();
+        int userID = Integer.parseInt(session.getAttribute("userID").toString());
+
+        GoalInfo newGoal = new GoalInfo(userID, title, date, metricType, targetValue, targetUnit, frequency, description);
+        Goal_CRUD newGoalCRUD = new Goal_CRUD();
+        String result = newGoalCRUD.create(newGoal);
+
+        if(result.equals("goal creation success")){
+            response.sendRedirect("goals.html");
+        }
+        else{
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            out.print("{\"goal creation error\": \"" + result + "\"}");
+            out.flush();
+        }
+
     }
 
     /**
