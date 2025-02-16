@@ -162,7 +162,7 @@
     <div class="header">
       <div>
         <div style="color: #6b7280">Dashboard</div>
-        <div style="font-size: 20px; font-weight: 600">Welcome back, Abdullah!</div>
+        <div style="font-size: 20px; font-weight: 600" id="welcomeMessage">Welcome back!</div>
       </div>
       <div class="user-menu">
         <div class="search-bar">
@@ -373,6 +373,14 @@
   
 
   <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('username');
+      if (username) {
+        document.getElementById('welcomeMessage').textContent = `Welcome back, ${username}!`;
+      }
+    });
+
     // Initialize the Workout Progress chart
     const ctx = document.getElementById('progressChart').getContext('2d');
     new Chart(ctx, {

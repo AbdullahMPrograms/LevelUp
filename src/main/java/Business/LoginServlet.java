@@ -79,7 +79,6 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         
-        //Create a userInfo object using the information from the user_crud
         UserInfo loginUser = new UserInfo();
         loginUser = User_CRUD.read(email, password);
         
@@ -90,7 +89,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("username", loginUser.getUsername());
                 session.setAttribute("userID", loginUser.getUserID());
                 session.setAttribute("isLoggedIn", true);
-                response.sendRedirect("dashboard.html");
+                response.sendRedirect("dashboard.html?username=" + java.net.URLEncoder.encode(loginUser.getUsername(), "UTF-8"));
             } else {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
