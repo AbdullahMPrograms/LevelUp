@@ -562,21 +562,22 @@
                 <h2>Add New Goal</h2>
                 <button class="close-button" onclick="closeflyout()">×</button>
             </div>
-            <form id="addGoalForm" onsubmit="handleSubmit(event)">
+            
+            <form action="GoalServlet" method="POST">
                 <div class="form-group">
                     <label>Goal Title</label>
-                    <input type="text" placeholder="e.g., Weight Training Goal" required>
+                    <input type="text" name="title" id="title" placeholder="e.g., Weight Training Goal" required>
                 </div>
                 
                 <div class="form-group">
                     <label>Target Date</label>
-                    <input type="date" required>
+                    <input type="date" name="date" id="date" required>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Metric Type</label>
-                        <select id="metricType" onchange="updateMetricUnit()" required>
+                        <select name="metricType" id="metricType" onchange="updateMetricUnit()" required>
                             <option value="">Select metric</option>
                             <option value="weight">Weight</option>
                             <option value="distance">Distance</option>
@@ -590,8 +591,8 @@
                     <div class="form-group target-value-container">
                         <label>Target Value</label>
                         <div class="input-with-unit">
-                            <input type="text" id="targetValue" placeholder="Enter value" required>
-                            <select id="metricUnit" required>
+                            <input type="text" name="targetValue" id="targetValue" placeholder="Enter value" required>
+                            <select name="metricUnit" id="metricUnit" required>
                                 <option value="">Unit</option>
                             </select>
                         </div>
@@ -600,7 +601,7 @@
                 
                 <div class="form-group">
                     <label>Frequency</label>
-                    <select required>
+                    <select name="frequency" id="frequency" required>
                         <option value="">Select frequency</option>
                         <option value="1x">1x per week</option>
                         <option value="2x">2x per week</option>
@@ -613,7 +614,7 @@
                 
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea placeholder="Add some details about your goal..." rows="3"></textarea>
+                    <textarea name="description" id="description" placeholder="Add some details about your goal..." rows="3"></textarea>
                 </div>
                 
                 <div class="form-actions">
