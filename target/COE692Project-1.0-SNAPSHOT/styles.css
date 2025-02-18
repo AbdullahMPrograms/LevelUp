@@ -1136,7 +1136,124 @@ select {
   color: #6b7280;
 }
 
-/* Keyframes (global) */
+/* -------------------------------------------------------------------------- */
+/*   Leaderboard Page Styles (extracted from leaderboard.html inline styles)  */
+/*   (These rules now apply only when the body tag has class="leaderboard-page")  */
+/* -------------------------------------------------------------------------- */
+
+.leaderboard-page .leaderboard-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+    animation: slideIn 0.4s ease-out forwards;
+    opacity: 0;
+}
+
+.leaderboard-page .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-page .leaderboard-table th {
+    text-align: left;
+    padding: 12px;
+    color: #6b7280;
+    border-bottom: 2px solid #e5e7eb;
+    font-weight: 500;
+}
+
+.leaderboard-page .leaderboard-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.leaderboard-page .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.leaderboard-page .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e5e7eb;
+}
+
+.leaderboard-page .user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard-page .user-name {
+    font-weight: 500;
+}
+
+.leaderboard-page .user-date {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.leaderboard-page .level-badge {
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.leaderboard-page .strength-badge {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-weight: 600;
+    text-align: center;
+    width: 40px;
+    display: inline-block;
+}
+
+.leaderboard-page .strength-S { background: #fee2e2; color: #dc2626; } /* Strong red */
+.leaderboard-page .strength-A { background: #ffedd5; color: #ea580c; } /* Deep orange */
+.leaderboard-page .strength-B { background: #fef3c7; color: #d97706; } /* Golden yellow */
+.leaderboard-page .strength-C { background: #fef9c3; color: #ca8a04; } /* Yellow */
+.leaderboard-page .strength-D { background: #ecfccb; color: #65a30d; } /* Light green */
+.leaderboard-page .strength-E { background: #dcfce7; color: #16a34a; } /* Pale green */
+
+.leaderboard-page .stats-value {
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.leaderboard-page .filters {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.leaderboard-page .filter-select {
+    padding: 8px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    color: #4b5563;
+    cursor: pointer;
+}
+
+.leaderboard-page .leaderboard-table tbody tr {
+    opacity: 0;
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+.leaderboard-page .leaderboard-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(2) { animation-delay: 0.13s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(3) { animation-delay: 0.21s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(4) { animation-delay: 0.29s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(5) { animation-delay: 0.37s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(6) { animation-delay: 0.45s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(7) { animation-delay: 0.53s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(8) { animation-delay: 0.61s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(9) { animation-delay: 0.69s; }
+.leaderboard-page .leaderboard-table tbody tr:nth-child(10) { animation-delay: 0.77s; }
+
+/* Global Keyframes */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -1163,13 +1280,3 @@ select {
         opacity: 1;
     }
 }
-
-/* Staggered animation for goal items */
-.goals-page .goal-item:nth-child(1) { animation-delay: 0.10s; }
-.goals-page .goal-item:nth-child(2) { animation-delay: 0.20s; }
-.goals-page .goal-item:nth-child(3) { animation-delay: 0.30s; }
-.goals-page .goal-item:nth-child(4) { animation-delay: 0.40s; }
-.goals-page .goal-item:nth-child(5) { animation-delay: 0.50s; }
-.goals-page .goal-item:nth-child(6) { animation-delay: 0.60s; }
-.goals-page .goal-item:nth-child(7) { animation-delay: 0.70s; }
-.goals-page .goal-item:nth-child(8) { animation-delay: 0.80s; }
