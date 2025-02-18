@@ -3,7 +3,10 @@ package Persistence;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import Helper.GoalInfo;
 
@@ -83,4 +86,45 @@ public class Goal_CRUD {
         return s;
     }
 
+
+    public List<GoalInfo> getAllUserGoals(int userID) {
+        List<GoalInfo> goals = new ArrayList<>();
+        
+        try (Connection con = getCon()) {
+            System.out.println("Database connection established");
+            
+            String query = "SELECT * FROM GOAL WHERE USER_ID = ?";
+            System.out.println("Executing query: " + query + " with userID: " + userID);
+            
+            try (PreparedStatement stmt = con.prepareStatement(query)) {
+                stmt.setInt(1, userID);
+                
+                try (ResultSet rs = stmt.executeQuery()) {
+                    System.out.println("Query executed successfully");
+                    
+                    while (rs.next()) {
+                        GoalInfo goal = new GoalInfo();
+                        goal.setUserID(rs.getInt("GOAL_ID"));
+                        goal.setUserID(rs.getInt("USER_ID"));
+                        goal.setTitle(rs.getString("GOAL_TITLE"));
+                        goal.setDate(rs.getString("TARGET_DATE"));
+                        goal.setMetricType(rs.getString("METRIC_TYPE"));
+                        goal.setTargetValue(rs.getString("TARGET_VALUE"));
+                        goal.setTargetUnit(rs.getString("TARGET_UNIT"));
+                        goal.setFrequency(rs.getString("FREQUENCY"));
+                        goal.setDescription(rs.getString("DESCRIPTION"));
+                        
+                        goals.add(goal);
+                        System.out.println("Added goal: " + goal.getTitle());
+                    }
+                    System.out.println("Total goals found: " + goals.size());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getAllUserGoals: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return goals;
+    }
 }

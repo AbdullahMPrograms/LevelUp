@@ -303,6 +303,24 @@
         .submit-button:hover {
             background: #fb923c;
         }
+
+        .no-goals {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            background: white;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .error-loading {
+            text-align: center;
+            padding: 20px;
+            color: #ef4444;
+            background: white;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
         
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -337,7 +355,9 @@
         .goal-item:nth-child(3) { animation-delay: 0.30s; }
         .goal-item:nth-child(4) { animation-delay: 0.40s; }
         .goal-item:nth-child(5) { animation-delay: 0.50s; }
-
+        .goal-item:nth-child(6) { animation-delay: 0.60s; }
+        .goal-item:nth-child(7) { animation-delay: 0.70s; }
+        .goal-item:nth-child(8) { animation-delay: 0.80s; }
     </style>
 </head>
 <body class="dashboard-page">
@@ -406,153 +426,7 @@
         </div>
 
         <div class="goals-list">
-            <div class="goal-item">
-                <div class="goal-info">
-                    <div class="goal-title">Weight Training Goal</div>
-                    <div class="goal-description">Target: February 28, 2025</div>
-                </div>
-                <div class="goal-metric">
-                    <div class="metric-value">150 lbs</div>
-                    <div class="metric-label">Target Weight</div>
-                </div>
-                <div class="goal-metric">
-                    <div class="metric-value">3x/week</div>
-                    <div class="metric-label">Frequency</div>
-                </div>
-                <div class="goal-metric">
-                    <div class="metric-trend trend-up">
-                        <i data-lucide="trending-up"></i>
-                        11%
-                    </div>
-                    <div class="metric-label">Progress</div>
-                </div>
-                <div class="goal-metric">
-                    <div class="metric-value">85%</div>
-                    <div class="metric-label">Completion</div>
-                </div>
-                <div class="action-buttons">
-                    <a href="#" class="view-button">View Item</a>
-                    <button class="edit-button">Edit</button>
-                </div>
-            </div>
-
-            <div class="goal-detail-slideout" data-goal-id="1">
-                <div class="goal-detail-content">
-                    <div class="goal-detail-left">
-                        <div class="goal-detail-header">
-                            <div class="goal-detail-title">Weight Training Goal Details</div>
-                        </div>
-                        <div class="goal-progress-chart">
-                            <canvas id="progressChart1"></canvas>
-                        </div>
-                    </div>
-                    <div class="goal-detail-right">
-                        <div class="goal-description-section">
-                            <div class="section-title">Description</div>
-                            <div class="description-content">
-                                This goal focuses on improving strength through consistent weight training.
-                                The target is to achieve a specific weight lifting capacity while maintaining proper form.
-                            </div>
-                        </div>
-                        <div class="goal-metrics-list">
-                            <div class="detail-metric">
-                                <span class="metric-name">Start Date</span>
-                                <span class="metric-detail">Jan 1, 2025</span>
-                            </div>
-                            <div class="detail-metric">
-                                <span class="metric-name">Target Date</span>
-                                <span class="metric-detail">Feb 28, 2025</span>
-                            </div>
-                            <div class="detail-metric">
-                                <span class="metric-name">Current Progress</span>
-                                <span class="metric-detail">85%</span>
-                            </div>
-                            <div class="detail-metric">
-                                <span class="metric-name">Frequency</span>
-                                <span class="metric-detail">3x/week</span>
-                            </div>
-                            <div class="detail-metric">
-                                <span class="metric-name">Status</span>
-                                <span class="metric-detail">On Track</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="goal-item">
-                <div class="goal-info">
-                    <div class="goal-title">Cardio Endurance</div>
-                    <div class="goal-description">Target: February 28, 2025</div>
-                </div>
-                <div class="goal-metric">
-                    <div class="metric-value">2k</div>
-                    <div class="metric-label">Distance</div>
-                </div>
-                <div class="goal-metric">
-                    <div class="metric-value">5x/week</div>
-                    <div class="metric-label">Frequency</div>
-                </div>
-                <div class="goal-metric">
-                    <div class="metric-trend trend-down">
-                        <i data-lucide="trending-down"></i>
-                        8%
-                    </div>
-                    <div class="metric-label">Progress</div>
-                </div>
-                <div class="goal-metric">
-                    <div class="metric-value">65%</div>
-                    <div class="metric-label">Completion</div>
-                </div>
-                <div class="action-buttons">
-                    <a href="#" class="view-button">View Item</a>
-                    <button class="edit-button">Edit</button>
-                </div>
-            </div>
-
-            <div class="goal-detail-slideout" data-goal-id="1">
-                <div class="goal-detail-content">
-                    <div class="goal-detail-left">
-                        <div class="goal-detail-header">
-                            <div class="goal-detail-title">Cardio Endurance Goal Details</div>
-                        </div>
-                        <div class="goal-progress-chart">
-                            <canvas id="progressChart2"></canvas>
-                        </div>
-                    </div>
-                    <div class="goal-detail-right">
-                        <div class="goal-description-section">
-                            <div class="section-title">Description</div>
-                            <div class="description-content">
-                                This goal focuses on improving endurance through consistent cardio training.
-                                The target is to achieve a specific cardio endurance capacity while maintaining consistency.
-                            </div>
-                        </div>
-                        <div class="goal-metrics-list">
-                            <div class="detail-metric">
-                                <span class="metric-name">Start Date</span>
-                                <span class="metric-detail">Jan 1, 2025</span>
-                            </div>
-                            <div class="detail-metric">
-                                <span class="metric-name">Target Date</span>
-                                <span class="metric-detail">Feb 28, 2025</span>
-                            </div>
-                            <div class="detail-metric">
-                                <span class="metric-name">Current Progress</span>
-                                <span class="metric-detail">65%</span>
-                            </div>
-                            <div class="detail-metric">
-                                <span class="metric-name">Frequency</span>
-                                <span class="metric-detail">5x/week</span>
-                            </div>
-                            <div class="detail-metric">
-                                <span class="metric-name">Status</span>
-                                <span class="metric-detail">On Track</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Goals will be loaded dynamically here -->
         </div>
     </div>
 
@@ -628,7 +502,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         lucide.createIcons();
-
+    
         const goalflyout = {
             element: document.getElementById('goalFormflyout'),
             form: document.getElementById('addGoalForm'),
@@ -689,19 +563,18 @@
             handleSubmit(event) {
                 event.preventDefault();
                 // Handle database here
-                // You got this Trevor!
                 const form = event.target;
                 const formData = new FormData(form);
-
-                //Convert formdata to url encoded string
+        
+                // Convert formdata to URL encoded string
                 const data = new URLSearchParams(formData).toString();
-
+        
                 fetch('GoalServlet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: data
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: data
                 })
                 .then(response => {
                     if (response.redirected) {
@@ -718,6 +591,7 @@
                         errorDiv.className = 'error-message';
                     } else {
                         errorDiv.style.display = 'none';
+                        loadGoals();
                     }
                 })
                 .catch(error => {
@@ -730,54 +604,59 @@
             }
         };
         goalflyout.init();
-
+    
         const goalDetails = {
             init() {
                 document.querySelectorAll('.view-button').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const goalItem = button.closest('.goal-item');
-                        const slideout = goalItem.nextElementSibling;
-                        
-                        if (slideout.classList.contains('goal-detail-slideout')) {
-                            this.toggleSlideout(slideout);
-                            if (!slideout.classList.contains('open')) {
-                                this.initializeChart(slideout);
-                            }
-                        }
-                    });
+                    button.removeEventListener('click', this.viewHandler);
+                    button.addEventListener('click', this.viewHandler);
                 });
-
+        
                 document.querySelectorAll('.minimize-button').forEach(button => {
-                    button.addEventListener('click', () => {
-                        const slideout = button.closest('.goal-detail-slideout');
-                        this.toggleSlideout(slideout);
-                    });
+                    button.removeEventListener('click', this.minimizeHandler);
+                    button.addEventListener('click', this.minimizeHandler);
                 });
             },
-
+        
+            viewHandler(e) {
+                e.preventDefault();
+                const btn = e.currentTarget;
+                const goalItem = btn.closest('.goal-item');
+                const slideout = goalItem.nextElementSibling;
+        
+                if (slideout && slideout.classList.contains('goal-detail-slideout')) {
+                    goalDetails.toggleSlideout(slideout);
+                }
+            },
+        
+            minimizeHandler(e) {
+                e.preventDefault();
+                const slideout = e.currentTarget.closest('.goal-detail-slideout');
+                goalDetails.toggleSlideout(slideout);
+            },
+        
             toggleSlideout(slideout) {
                 const isOpen = slideout.classList.toggle('open');
                 const allSlideouts = document.querySelectorAll('.goal-detail-slideout');
-                
+        
                 allSlideouts.forEach(s => {
                     if (s !== slideout) s.classList.remove('open');
                 });
-
+        
                 if (isOpen) {
                     setTimeout(() => {
                         this.initializeChart(slideout);
                     }, 0);
                 }
             },
-
+        
             initializeChart(slideout) {
                 const canvas = slideout.querySelector('canvas');
                 if (canvas.__chart) {
                     canvas.__chart.update();
                     return;
                 }
-
+        
                 const ctx = canvas.getContext('2d');
                 canvas.__chart = new Chart(ctx, {
                     type: 'line',
@@ -811,11 +690,147 @@
                         }
                     }
                 });
-
+        
                 canvas.__chart.resize();
             }
         };
-        goalDetails.init();
+    
+        function loadGoals() {
+            console.log('Starting to load goals...');
+            fetch('GoalServlet')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(goals => {
+                    console.log('Parsed goals:', goals);
+                    const goalsList = document.querySelector('.goals-list');
+                    goalsList.innerHTML = '';
+        
+                    if (goals.length === 0) {
+                        goalsList.innerHTML = '<div class="no-goals">No goals found. Add a new goal to get started!</div>';
+                        return;
+                    }
+        
+                    goals.forEach(goal => {
+                        goalsList.appendChild(createGoalElement(goal));
+                    });
+                    lucide.createIcons();
+                    goalDetails.init();
+                })
+                .catch(error => {
+                    console.error('Detailed error:', error);
+                    const goalsList = document.querySelector('.goals-list');
+                    goalsList.innerHTML = `<div class="error-loading">Error loading goals: ${error.message}</div>`;
+                });
+        }
+        
+        // Map metric type to proper display label for the metric label
+        function mapMetricLabel(metricType) {
+            const mapping = {
+                weight: "Target Weight",
+                distance: "Distance",
+                time: "Time",
+                sets: "Sets/Reps",
+                calories: "Calories",
+                custom: "Custom"
+            };
+            return mapping[metricType] || metricType;
+        }
+        
+        function createGoalElement(goal) {
+            const fragment = document.createDocumentFragment();
+        
+            // Create main goal item
+            const goalDiv = document.createElement('div');
+            goalDiv.className = 'goal-item';
+            goalDiv.innerHTML = `
+                <div class="goal-info">
+                    <div class="goal-title">${goal.title}</div>
+                    <div class="goal-description">Target: ${goal.targetDate}</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">${goal.targetValue} ${goal.targetUnit}</div>
+                    <div class="metric-label">${mapMetricLabel(goal.metricType)}</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">${goal.frequency === 'daily' ? 'daily' : goal.frequency + '/week'}</div>
+                    <div class="metric-label">Frequency</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-trend ${goal.trend === 'down' ? 'trend-down' : 'trend-up'}">
+                        <i data-lucide="${goal.trend === 'down' ? 'trending-down' : 'trending-up'}"></i>
+                        ${goal.progress || '11%'}
+                    </div>
+                    <div class="metric-label">Progress</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">${goal.completion || '85%'}</div>
+                    <div class="metric-label">Completion</div>
+                </div>
+                <div class="action-buttons">
+                    <a href="#" class="view-button">View Item</a>
+                    <button class="edit-button">Edit</button>
+                </div>
+            `;
+            fragment.appendChild(goalDiv);
+        
+            // Goal detail slideout with minimize button
+            const slideoutDiv = document.createElement('div');
+            slideoutDiv.className = 'goal-detail-slideout';
+            slideoutDiv.setAttribute('data-goal-id', goal.id);
+            slideoutDiv.innerHTML = `
+                <div class="goal-detail-content">
+                    <div class="goal-detail-left">
+                        <div class="goal-detail-header">
+                            <div class="goal-detail-title">${goal.title} Details</div>
+                            <button class="minimize-button" style="background:none;border:none;font-size:24px;cursor:pointer;">×</button>
+                        </div>
+                        <div class="goal-progress-chart">
+                            <canvas id="progressChart${goal.id}"></canvas>
+                        </div>
+                    </div>
+                    <div class="goal-detail-right">
+                        <div class="goal-description-section">
+                            <div class="section-title">Description</div>
+                            <div class="description-content">${goal.description || 'This goal focuses on improving through consistent training.'}</div>
+                        </div>
+                        <div class="goal-metrics-list">
+                            <div class="detail-metric">
+                                <span class="metric-name">Start Date</span>
+                                <span class="metric-detail">Jan 1, 2025</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Target Date</span>
+                                <span class="metric-detail">${goal.targetDate}</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Current Progress</span>
+                                <span class="metric-detail">${goal.progress || '85%'}</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Frequency</span>
+                                <span class="metric-detail">${goal.frequency === 'daily' ? 'daily' : goal.frequency + '/week'}</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Status</span>
+                                <span class="metric-detail">On Track</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            fragment.appendChild(slideoutDiv);
+        
+            return fragment;
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGoals();
+        });
     </script>
 </body>
 </html>

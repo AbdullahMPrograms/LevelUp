@@ -6,6 +6,12 @@ package Business;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -63,7 +69,68 @@ public class GoalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            HttpSession session = request.getSession();
+            if (session.getAttribute("userID") == null) {
+                System.out.println("UserID is null in session");
+                throw new ServletException("User not logged in");
+            }
+            
+            int userID = Integer.parseInt(session.getAttribute("userID").toString());
+            System.out.println("Fetching goals for userID: " + userID);
+            
+            Goal_CRUD goalCRUD = new Goal_CRUD();
+            List<GoalInfo> goals = goalCRUD.getAllUserGoals(userID);
+            
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            
+            try (PrintWriter out = response.getWriter()) {
+                StringBuilder jsonBuilder = new StringBuilder("[");
+                
+                for (int i = 0; i < goals.size(); i++) {
+                    if (i > 0) {
+                        jsonBuilder.append(",");
+                    }
+                    
+                    GoalInfo goal = goals.get(i);
+                    jsonBuilder.append("{")
+                        .append("\"id\":\"").append(goal.getUserID()).append("\",")
+                        .append("\"title\":\"").append(escapeJson(goal.getTitle())).append("\",")
+                        .append("\"targetDate\":\"").append(escapeJson(goal.getDate())).append("\",")
+                        .append("\"metricType\":\"").append(escapeJson(goal.getMetricType())).append("\",")
+                        .append("\"targetValue\":\"").append(escapeJson(goal.getTargetValue())).append("\",")
+                        .append("\"targetUnit\":\"").append(escapeJson(goal.getTargetUnit())).append("\",")
+                        .append("\"frequency\":\"").append(escapeJson(goal.getFrequency())).append("\",")
+                        .append("\"description\":\"").append(escapeJson(goal.getDescription())).append("\",")
+                        .append("\"progress\":0,")
+                        .append("\"completion\":0")
+                        .append("}");
+                }
+                
+                jsonBuilder.append("]");
+                System.out.println("Sending JSON response: " + jsonBuilder.toString());
+                out.print(jsonBuilder.toString());
+                out.flush();
+            }
+        } catch (Exception e) {
+            System.err.println("Error in GoalServlet doGet: " + e.getMessage());
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
+    
+    // Helper method to escape JSON strings
+    private String escapeJson(String input) {
+        if (input == null) {
+            return "";
+        }
+        return input.replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .replace("\n", "\\n")
+                    .replace("\r", "\\r")
+                    .replace("\t", "\\t");
     }
 
     /**
