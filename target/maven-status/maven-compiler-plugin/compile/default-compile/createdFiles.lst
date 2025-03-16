@@ -1,7 +1,0 @@
-Business\SignUpServlet.class
-Helper\GoalInfo.class
-Persistence\User_CRUD.class
-Business\LoginServlet.class
-Helper\UserInfo.class
-Persistence\Goal_CRUD.class
-Business\GoalServlet.class

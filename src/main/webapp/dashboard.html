@@ -12,7 +12,7 @@
   <div class="sidebar">
     <div class="logo">Level Up!</div>
     <nav>
-      <a href="index.html" class="nav-item active">
+      <a href="dashboard.html" class="nav-item active">
         <i data-lucide="menu"></i>
         <span>Overview</span>
       </a>
@@ -332,6 +332,12 @@
         document.querySelector('.nav-item.active').classList.remove('active');
         item.classList.add('active');
       });
+    });
+
+    // Handle logout
+    document.querySelector('.sidebar-footer a').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'FrontEndService?pageName=logout';
     });
 
     lucide.createIcons();

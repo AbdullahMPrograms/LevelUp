@@ -1,7 +1,10 @@
-C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Business\LoginServlet.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Controller\GoalServlet.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\View\Authentication.java
 C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Helper\GoalInfo.java
-C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Persistence\Goal_CRUD.java
-C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Business\GoalServlet.java
-C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Business\SignUpServlet.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Controller\LoginServlet.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Model\Goal_CRUD.java
 C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Helper\UserInfo.java
-C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Persistence\User_CRUD.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Controller\FrontEndService.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Controller\SignUpServlet.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Model\UserModel.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\COE692Project\src\main\java\Model\User_CRUD.java
