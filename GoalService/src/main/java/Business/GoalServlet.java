@@ -44,7 +44,7 @@ public class GoalServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        LOGGER.info("🟢 GoalServlet initializing...");
+        LOGGER.info("GoalServlet initializing...");
         LOGGER.info("Secret key first 5 chars: " + SECRET_KEY.substring(0, 5) + "...");
     }
 
@@ -127,7 +127,7 @@ public class GoalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        LOGGER.info("🟢 GoalServlet GET request received");
+        LOGGER.info("GoalServlet GET request received");
         LOGGER.info("Request URI: " + request.getRequestURI());
         LOGGER.info("Context Path: " + request.getContextPath());
         LOGGER.info("Servlet Path: " + request.getServletPath());
