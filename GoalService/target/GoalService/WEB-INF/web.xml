@@ -6,20 +6,6 @@
     
     <display-name>Level Up Goal Service</display-name>
     
-    <!-- Debug Servlet Mapping -->
-    <servlet>
-        <servlet-name>DebugServlet</servlet-name>
-        <servlet-class>Business.DebugServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DebugServlet</servlet-name>
-        <url-pattern>/debug</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DebugServlet</servlet-name>
-        <url-pattern>/api/debug</url-pattern>
-    </servlet-mapping>
-    
     <!-- Goal Servlet Mapping -->
     <servlet>
         <servlet-name>GoalServlet</servlet-name>
