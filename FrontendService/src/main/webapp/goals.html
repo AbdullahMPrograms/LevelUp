@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Up! - Goals</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dashboard-page goals-page">
+    <div class="sidebar">
+        <div class="logo">Level Up!</div>
+        <nav>
+            <a href="dashboard.html" class="nav-item">
+                <i data-lucide="menu"></i>
+                <span>Overview</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="dumbbell"></i>
+                <span>Workout</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="cookie"></i>
+                <span>Diet Plan</span>
+            </a>
+            <a href="goals.html" class="nav-item active">
+                <i data-lucide="target"></i>
+                <span>Goals</span>
+            </a>
+            <a href="schedule.html" class="nav-item">
+                <i data-lucide="calendar"></i>
+                <span>My Schedule</span>
+            </a>
+            <a href="leaderboard.html" class="nav-item">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Leaderboard</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="login.html" class="nav-item">
+                <i data-lucide="log-out"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <div style="color: #6b7280">Goals</div>
+                <div style="font-size: 20px; font-weight: 600">Fitness Goals</div>
+            </div>
+            <div class="user-menu">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search goals...">
+                </div>
+                <div>🔔</div>
+                <div>⚙️</div>
+                <div class="profile-pic"></div>
+            </div>
+        </div>
+
+        <div class="page-header">
+            <div class="context-menu">
+                <button class="context-button active">All Goals</button>
+                <button class="context-button">Active</button>
+                <button class="context-button">Completed</button>
+            </div>
+            <button class="add-goal-button">
+                <i data-lucide="plus"></i>
+                Add New Goal
+            </button>
+        </div>
+
+        <div class="goals-list">
+            <!-- Goals will be loaded dynamically here -->
+        </div>
+    </div>
+
+    <div id="goalFormflyout" class="flyout-overlay" style="display: none;">
+        <div class="flyout-content">
+            <div class="flyout-header">
+                <h2>Add New Goal</h2>
+                <button class="close-button" onclick="closeflyout()">×</button>
+            </div>
+            
+            <form id="addGoalForm" action="FrontEndService" method="POST">
+                <input type="hidden" name="pageName" value="goals">
+                <div class="form-group">
+                    <label>Goal Title</label>
+                    <input type="text" name="title" id="title" placeholder="e.g., Weight Training Goal" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Target Date</label>
+                    <input type="date" name="date" id="date" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Metric Type</label>
+                        <select name="metricType" id="metricType" onchange="updateMetricUnit()" required>
+                            <option value="">Select metric</option>
+                            <option value="weight">Weight</option>
+                            <option value="distance">Distance</option>
+                            <option value="time">Time</option>
+                            <option value="sets">Sets/Reps</option>
+                            <option value="calories">Calories</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group target-value-container">
+                        <label>Target Value</label>
+                        <div class="input-with-unit">
+                            <input type="text" name="targetValue" id="targetValue" placeholder="Enter value" required>
+                            <select name="metricUnit" id="metricUnit" required>
+                                <option value="">Unit</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select name="frequency" id="frequency" required>
+                        <option value="">Select frequency</option>
+                        <option value="1x">1x per week</option>
+                        <option value="2x">2x per week</option>
+                        <option value="3x">3x per week</option>
+                        <option value="4x">4x per week</option>
+                        <option value="5x">5x per week</option>
+                        <option value="daily">Daily</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" id="description" placeholder="Add some details about your goal..." rows="3"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-button" onclick="closeflyout()">Cancel</button>
+                    <button type="submit" class="submit-button">Create Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Remove the checkAuth fetch and simply call loadGoals when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Directly load goals; credentials will be sent using the cookie set at login.
+            loadGoals();
+        });
+
+        lucide.createIcons();
+    
+        const goalflyout = {
+            element: document.getElementById('goalFormflyout'),
+            form: document.getElementById('addGoalForm'),
+            
+            metrics: {
+                weight: { units: ['lbs', 'kg'], default: 'lbs', placeholder: 'e.g., 150' },
+                distance: { units: ['km', 'mi', 'm'], default: 'km', placeholder: 'e.g., 5' },
+                time: { units: ['mins', 'hrs', 's'], default: 'mins', placeholder: 'e.g., 30' },
+                sets: { units: ['reps', 'sets'], default: 'reps', placeholder: 'e.g., 12' },
+                calories: { units: ['kcal'], default: 'kcal', placeholder: 'e.g., 500' },
+                custom: { units: ['custom'], default: 'custom', placeholder: 'Enter value' }
+            },
+        
+            init() {
+                document.querySelector('.add-goal-button').addEventListener('click', () => this.open());
+                document.getElementById('metricType').addEventListener('change', () => this.updateMetric());
+                
+                document.querySelector('.close-button').addEventListener('click', () => this.close());
+                document.querySelector('.cancel-button').addEventListener('click', () => this.close());
+                
+                this.element.addEventListener('click', (e) => {
+                    if (e.target === this.element) this.close();
+                });
+                
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+            },
+        
+            updateMetric() {
+                const metricType = document.getElementById('metricType').value;
+                const metric = this.metrics[metricType];
+                
+                if (!metric) return;
+        
+                document.getElementById('targetValue').placeholder = metric.placeholder;
+        
+                // Update and auto-select unit
+                const unitSelect = document.getElementById('metricUnit');
+                unitSelect.innerHTML = metric.units
+                    .map(unit => `<option value="${unit}">${unit}</option>`)
+                    .join('');
+                unitSelect.value = metric.default;
+            },
+        
+            open() {
+                this.element.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            },
+        
+            close() {
+                this.element.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                this.form.reset();
+                
+                const unitSelect = document.getElementById('metricUnit');
+                unitSelect.innerHTML = '<option value="">Unit</option>';
+            },
+        
+            handleSubmit(event) {
+                event.preventDefault();
+                // Handle database here
+                const form = event.target;
+                const formData = new FormData(form);
+        
+                // Convert formdata to URL encoded string
+                const data = new URLSearchParams(formData).toString();
+        
+                fetch('FrontEndService', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: data + '&pageName=goals'  // Add the pageName parameter
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return Promise.reject('Redirecting...');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const errorDiv = document.getElementById('errorMessage');
+                    if (data && data.error) {
+                        errorDiv.textContent = data.error;
+                        errorDiv.style.display = 'block';
+                        errorDiv.className = 'error-message';
+                    } else {
+                        errorDiv.style.display = 'none';
+                        loadGoals();
+                    }
+                })
+                .catch(error => {
+                    if (error !== 'Redirecting...') {
+                        console.error('Error:', error);
+                    }
+                });
+        
+                return false;
+            }
+        };
+        goalflyout.init();
+    
+        const goalDetails = {
+            init() {
+                document.querySelectorAll('.view-button').forEach(button => {
+                    button.removeEventListener('click', this.viewHandler);
+                    button.addEventListener('click', this.viewHandler);
+                });
+        
+                document.querySelectorAll('.minimize-button').forEach(button => {
+                    button.removeEventListener('click', this.minimizeHandler);
+                    button.addEventListener('click', this.minimizeHandler);
+                });
+            },
+        
+            viewHandler(e) {
+                e.preventDefault();
+                const btn = e.currentTarget;
+                const goalItem = btn.closest('.goal-item');
+                const slideout = goalItem.nextElementSibling;
+        
+                if (slideout && slideout.classList.contains('goal-detail-slideout')) {
+                    goalDetails.toggleSlideout(slideout);
+                }
+            },
+        
+            minimizeHandler(e) {
+                e.preventDefault();
+                const slideout = e.currentTarget.closest('.goal-detail-slideout');
+                goalDetails.toggleSlideout(slideout);
+            },
+        
+            toggleSlideout(slideout) {
+                const isOpen = slideout.classList.toggle('open');
+                const allSlideouts = document.querySelectorAll('.goal-detail-slideout');
+        
+                allSlideouts.forEach(s => {
+                    if (s !== slideout) s.classList.remove('open');
+                });
+        
+                if (isOpen) {
+                    setTimeout(() => {
+                        this.initializeChart(slideout);
+                    }, 0);
+                }
+            },
+        
+            initializeChart(slideout) {
+                const canvas = slideout.querySelector('canvas');
+                if (canvas.__chart) {
+                    canvas.__chart.update();
+                    return;
+                }
+        
+                const ctx = canvas.getContext('2d');
+                canvas.__chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Progress',
+                            data: [30, 45, 55, 60, 75, 85],
+                            borderColor: '#f97316',
+                            tension: 0.4,
+                            fill: true,
+                            backgroundColor: 'rgba(249, 115, 22, 0.1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: value => value + '%'
+                                }
+                            }
+                        }
+                    }
+                });
+        
+                canvas.__chart.resize();
+            }
+        };
+    
+        function loadGoals() {
+            console.log('Starting to load goals...');
+            
+            // Try to get token from cookie directly
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            }
+            
+            const token = getCookie('login_token');
+            console.log('Token from cookie:', token ? 'Found' : 'Not found');
+            
+            fetch('FrontEndService?pageName=getGoals' + (token ? '&token=' + token : ''), {
+                method: 'GET',
+                credentials: 'include'  // Still include cookies as backup
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(goals => {
+                console.log('Parsed goals:', goals);
+                const goalsList = document.querySelector('.goals-list');
+                goalsList.innerHTML = '';
+        
+                if (goals.length === 0) {
+                    goalsList.innerHTML = '<div class="no-goals">No goals found. Add a new goal to get started!</div>';
+                    return;
+                }
+        
+                goals.forEach(goal => {
+                    goalsList.appendChild(createGoalElement(goal));
+                });
+                lucide.createIcons();
+                goalDetails.init();
+            })
+            .catch(error => {
+                console.error('Error loading goals:', error);
+                const goalsList = document.querySelector('.goals-list');
+                
+                if (error.message.includes("401")) {
+                    // Authentication error - add login link
+                    goalsList.innerHTML = `
+                        <div class="error-loading">
+                            Error: You need to be logged in to view goals.<br>
+                            <a href="login.html" class="login-link">Login Now</a>
+                        </div>`;
+                } else {
+                    goalsList.innerHTML = `<div class="error-loading">Error loading goals: ${error.message}</div>`;
+                }
+            });
+        }
+        
+        // Map metric type to proper display label for the metric label
+        function mapMetricLabel(metricType) {
+            const mapping = {
+                weight: "Target Weight",
+                distance: "Distance",
+                time: "Time",
+                sets: "Sets/Reps",
+                calories: "Calories",
+                custom: "Custom"
+            };
+            return mapping[metricType] || metricType;
+        }
+        
+        function createGoalElement(goal) {
+            const fragment = document.createDocumentFragment();
+        
+            // Create main goal item
+            const goalDiv = document.createElement('div');
+            goalDiv.className = 'goal-item';
+            goalDiv.innerHTML = `
+                <div class="goal-info">
+                    <div class="goal-title">${goal.title}</div>
+                    <div class="goal-description">Target: ${goal.targetDate}</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">${goal.targetValue} ${goal.targetUnit}</div>
+                    <div class="metric-label">${mapMetricLabel(goal.metricType)}</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">${goal.frequency === 'daily' ? 'daily' : goal.frequency + '/week'}</div>
+                    <div class="metric-label">Frequency</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-trend ${goal.trend === 'down' ? 'trend-down' : 'trend-up'}">
+                        <i data-lucide="${goal.trend === 'down' ? 'trending-down' : 'trending-up'}"></i>
+                        ${goal.progress || '11%'}
+                    </div>
+                    <div class="metric-label">Progress</div>
+                </div>
+                <div class="goal-metric">
+                    <div class="metric-value">${goal.completion || '85%'}</div>
+                    <div class="metric-label">Completion</div>
+                </div>
+                <div class="action-buttons">
+                    <a href="#" class="view-button">View Item</a>
+                    <button class="edit-button">Edit</button>
+                </div>
+            `;
+            fragment.appendChild(goalDiv);
+        
+            // Goal detail slideout with minimize button
+            const slideoutDiv = document.createElement('div');
+            slideoutDiv.className = 'goal-detail-slideout';
+            slideoutDiv.setAttribute('data-goal-id', goal.id);
+            slideoutDiv.innerHTML = `
+                <div class="goal-detail-content">
+                    <div class="goal-detail-left">
+                        <div class="goal-detail-header">
+                            <div class="goal-detail-title">${goal.title} Details</div>
+                            <button class="minimize-button" style="background:none;border:none;font-size:24px;cursor:pointer;">×</button>
+                        </div>
+                        <div class="goal-progress-chart">
+                            <canvas id="progressChart${goal.id}"></canvas>
+                        </div>
+                    </div>
+                    <div class="goal-detail-right">
+                        <div class="goal-description-section">
+                            <div class="section-title">Description</div>
+                            <div class="description-content">${goal.description || 'This goal focuses on improving through consistent training.'}</div>
+                        </div>
+                        <div class="goal-metrics-list">
+                            <div class="detail-metric">
+                                <span class="metric-name">Start Date</span>
+                                <span class="metric-detail">Jan 1, 2025</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Target Date</span>
+                                <span class="metric-detail">${goal.targetDate}</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Current Progress</span>
+                                <span class="metric-detail">${goal.progress || '85%'}</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Frequency</span>
+                                <span class="metric-detail">${goal.frequency === 'daily' ? 'daily' : goal.frequency + '/week'}</span>
+                            </div>
+                            <div class="detail-metric">
+                                <span class="metric-name">Status</span>
+                                <span class="metric-detail">On Track</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            fragment.appendChild(slideoutDiv);
+        
+            return fragment;
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Directly load goals; credentials will be sent using the cookie set at login.
+            loadGoals();
+            
+            // Initialize components
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

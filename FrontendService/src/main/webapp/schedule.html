@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule - Level Up!</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dashboard-page schedule-page">
+    <div class="sidebar">
+        <div class="logo">Level Up!</div>
+        <nav>
+            <a href="dashboard.html" class="nav-item">
+                <i data-lucide="menu"></i>
+                <span>Overview</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="dumbbell"></i>
+                <span>Workout</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i data-lucide="cookie"></i>
+                <span>Diet Plan</span>
+            </a>
+            <a href="goals.html" class="nav-item">
+                <i data-lucide="target"></i>
+                <span>Goals</span>
+            </a>
+            <a href="schedule.html" class="nav-item active">
+                <i data-lucide="calendar"></i>
+                <span>My Schedule</span>
+            </a>
+            <a href="leaderboard.html" class="nav-item">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Leaderboard</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="login.html" class="nav-item">
+                <i data-lucide="log-out"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <div style="color: #6b7280">My Schedule</div>
+                <div style="font-size: 20px; font-weight: 600">Workout Plan</div>
+            </div>
+            <div class="user-menu">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div>🔔</div>
+                <div>⚙️</div>
+                <div class="profile-pic"></div>
+            </div>
+        </div>
+
+        <div class="calendar-header">
+            <div class="month-selector">
+                <button class="nav-button"><i data-lucide="chevron-left"></i></button>
+                <h2>February 2025</h2>
+                <button class="nav-button"><i data-lucide="chevron-right"></i></button>
+            </div>
+            <div class="view-selector">
+                <button class="view-button active">Month</button>
+                <button class="view-button">Week</button>
+                <button class="view-button">Day</button>
+            </div>
+        </div>
+
+        <div class="calendar-grid">
+            <div class="calendar-header-row">
+                <div>Sunday</div>
+                <div>Monday</div>
+                <div>Tuesday</div>
+                <div>Wednesday</div>
+                <div>Thursday</div>
+                <div>Friday</div>
+                <div>Saturday</div>
+            </div>
+            <div class="calendar-body">
+                <!-- Week 1 -->
+                <div class="calendar-cell disabled"><span>26</span></div>
+                <div class="calendar-cell disabled"><span>27</span></div>
+                <div class="calendar-cell disabled"><span>28</span></div>
+                <div class="calendar-cell disabled"><span>29</span></div>
+                <div class="calendar-cell disabled"><span>30</span></div>
+                <div class="calendar-cell disabled"><span>31</span></div>
+                <div class="calendar-cell">
+                    <span>1</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+
+                <!-- Week 2 -->
+                <div class="calendar-cell">
+                    <span>2</span>
+                    <div class="workout-item stretch">Stretching Exercises</div>
+                    <div class="workout-item cardio">Running</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>3</span>
+                    <div class="workout-item strength">Push</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>4</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>5</span>
+                    <div class="workout-item strength">Pull</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>6</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>7</span>
+                    <div class="workout-item strength">Legs</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>8</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+
+                <!-- Week 3 -->
+                <div class="calendar-cell">
+                    <span>9</span>
+                    <div class="workout-item stretch">Stretching Excersizes</div>
+                    <div class="workout-item cardio">Running</div>
+                </div>
+                <div class="calendar-cell today">
+                    <span>10</span>
+                    <div class="workout-item strength">Push</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>11</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>12</span>
+                    <div class="workout-item strength">Pull</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>13</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>14</span>
+                    <div class="workout-item strength">Legs</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>15</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+
+                <!-- Week 4 -->
+                <div class="calendar-cell">
+                    <span>16</span>
+                    <div class="workout-item stretch">Stretching Exercises</div>
+                    <div class="workout-item cardio">Running</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>17</span>
+                    <div class="workout-item strength">Push</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>18</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>19</span>
+                    <div class="workout-item strength">Pull</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>20</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>21</span>
+                    <div class="workout-item strength">Legs</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>22</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+
+                <!-- Week 5 -->
+                <div class="calendar-cell">
+                    <span>23</span>
+                    <div class="workout-item stretch">Stretching Exercises</div>
+                    <div class="workout-item cardio">Running</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>24</span>
+                    <div class="workout-item strength">Push</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>25</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>26</span>
+                    <div class="workout-item strength">Pull</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>27</span>
+                    <div class="workout-item rest">Rest Day</div>
+                </div>
+                <div class="calendar-cell">
+                    <span>28</span>
+                    <div class="workout-item strength">Legs</div>
+                </div>
+                <div class="calendar-cell disabled"><span>1</span></div>
+            </div>
+        </div>
+
+        <div class="upcoming-workouts">
+            <h3>Upcoming Workouts</h3>
+            <div class="workout-list">
+                <div class="workout-card strength">
+                    <div class="workout-time">6:00 PM</div>
+                    <div class="workout-info">
+                        <h4>Push</h4>
+                        <p>Strength Training - 120 mins</p>
+                    </div>
+                    <div class="workout-status">Today</div>
+                </div>
+                <div class="workout-card strength">
+                    <div class="workout-time">8:00 PM</div>
+                    <div class="workout-info">
+                        <h4>Pull</h4>
+                        <p>Strength Training - 120 mins</p>
+                    </div>
+                    <div class="workout-status">Wednesday</div>
+                </div>
+                <div class="workout-card strength">
+                    <div class="workout-time">8:00 PM</div>
+                    <div class="workout-info">
+                        <h4>Legs</h4>
+                        <p>Strength Training - 120 mins</p>
+                    </div>
+                    <div class="workout-status">Friday</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Add click handlers for navigation items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.nav-item.active').classList.remove('active');
+                item.classList.add('active');
+            });
+        });
+
+        // View selector handlers
+        document.querySelectorAll('.view-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelector('.view-button.active').classList.remove('active');
+                button.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

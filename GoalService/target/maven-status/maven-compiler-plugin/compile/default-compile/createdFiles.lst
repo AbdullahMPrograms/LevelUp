@@ -1,0 +1,6 @@
+Model\GoalModel.class
+Business\GoalBusiness.class
+Helper\GoalInfo.class
+Business\DebugServlet.class
+Business\GoalServlet.class
+Model\UserModel.class
