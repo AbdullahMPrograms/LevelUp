@@ -1,4 +1,3 @@
-Business\TestServlet.class
+Business\ServiceClient.class
 Business\Authentication.class
 Business\FrontEndService.class
-Business\ServiceClient.class

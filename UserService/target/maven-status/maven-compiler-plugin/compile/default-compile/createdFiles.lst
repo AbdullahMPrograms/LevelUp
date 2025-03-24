@@ -1,4 +1,4 @@
 Business\UserBusiness.class
 Helper\UserInfo.class
 UserServlet.class
-Model\UserModel.class
+Persistence\UserPersistence.class

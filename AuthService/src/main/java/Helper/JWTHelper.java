@@ -1,4 +1,4 @@
-package Util;
+package Helper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -14,7 +14,7 @@ import java.util.Date;
 /**
  * Utility for JWT token generation and validation
  */
-public class JWTUtil {
+public class JWTHelper {
 
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     private static final String SECRET_KEY = "abcdefghijklmnopqrstuvwxyz1234567890"; // 36 chars = 288 bits

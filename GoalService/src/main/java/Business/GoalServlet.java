@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 import Helper.GoalInfo;
-import Model.UserModel;
+import Persistence.UserPersistence;
 
 /**
  * Servlet for goal endpoints
@@ -113,8 +113,8 @@ public class GoalServlet extends HttpServlet {
      */
     private int getUserIdFromEmail(String email) {
         try {
-            // Use the UserModel to look up the user ID
-            return UserModel.getUserIdFromEmail(email);
+            // Use the UserPersistence to look up the user ID
+            return UserPersistence.getUserIdFromEmail(email);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error getting user ID: " + e.getMessage(), e);
             return -1;

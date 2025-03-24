@@ -1,4 +1,4 @@
-Util\JWTUtil.class
+Persistence\AuthPersistence.class
 AuthServlet.class
 Business\AuthBusiness.class
-Model\AuthModel.class
+Helper\JWTHelper.class

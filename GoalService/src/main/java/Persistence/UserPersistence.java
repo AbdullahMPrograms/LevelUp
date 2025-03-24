@@ -1,4 +1,4 @@
-package Model;
+package Persistence;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 /**
  * Model for user-related database operations
  */
-public class UserModel {
-    private static final Logger LOGGER = Logger.getLogger(UserModel.class.getName());
+public class UserPersistence {
+    private static final Logger LOGGER = Logger.getLogger(UserPersistence.class.getName());
     private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "student123";

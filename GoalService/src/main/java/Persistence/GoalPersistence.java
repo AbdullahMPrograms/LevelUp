@@ -1,4 +1,4 @@
-package Model;
+package Persistence;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 
 import Helper.GoalInfo;
 
-public class GoalModel {
-    private static final Logger LOGGER = Logger.getLogger(GoalModel.class.getName());
+public class GoalPersistence {
+    private static final Logger LOGGER = Logger.getLogger(GoalPersistence.class.getName());
     private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "student123";

@@ -1,4 +1,4 @@
 C:\Users\AbdullahPC\Documents\NetBeansProjects\LevelUp\AuthService\src\main\java\AuthServlet.java
 C:\Users\AbdullahPC\Documents\NetBeansProjects\LevelUp\AuthService\src\main\java\Business\AuthBusiness.java
-C:\Users\AbdullahPC\Documents\NetBeansProjects\LevelUp\AuthService\src\main\java\Model\AuthModel.java
-C:\Users\AbdullahPC\Documents\NetBeansProjects\LevelUp\AuthService\src\main\java\Util\JWTUtil.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\LevelUp\AuthService\src\main\java\Helper\JWTHelper.java
+C:\Users\AbdullahPC\Documents\NetBeansProjects\LevelUp\AuthService\src\main\java\Persistence\AuthPersistence.java

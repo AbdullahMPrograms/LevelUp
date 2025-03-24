@@ -1,4 +1,4 @@
-package Model;
+package Persistence;
 
 import Helper.UserInfo;
 import java.sql.*;
@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 /**
  * Data access model for user operations
  */
-public class UserModel {
+public class UserPersistence {
     
-    private static final Logger LOGGER = Logger.getLogger(UserModel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UserPersistence.class.getName());
     
     /**
      * Get database connection

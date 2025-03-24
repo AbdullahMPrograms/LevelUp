@@ -1498,3 +1498,184 @@ select {
         opacity: 1;
     }
 }
+
+
+/* Additional CSS for workout.html - Add these to your existing styles.css file */
+
+/* Workout page specific styles */
+.workout-page {
+    background-color: #f3f4f6;
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  /* Workout hero section */
+  .workout-hero {
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .workout-illustration {
+    background-color: #f9fafb;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .workout-illustration img {
+    height: 250px;
+    margin-bottom: 20px;
+  }
+  
+  .workout-quote {
+    text-align: center;
+    color: #4b5563;
+    font-style: italic;
+    font-size: 14px;
+    max-width: 400px;
+  }
+  
+  /* Workout metrics bar */
+  .workout-metrics {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+  }
+  
+  .workout-stat {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .workout-stat-label {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .workout-stat-value {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  
+  .big-number {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: #111827;
+  }
+  
+  .big-number.light {
+    color: #9ca3af;
+  }
+  
+  .stat-details {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+  
+  .stat-unit {
+    font-size: 14px;
+    color: #111827;
+  }
+  
+  .stat-target {
+    font-size: 12px;
+    color: #6b7280;
+  }
+  
+  .workout-icon {
+    margin-left: 20px;
+  }
+  
+  .workout-action {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .primary-button {
+    background-color: #111827;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .primary-button:hover {
+    background-color: #1f2937;
+  }
+  
+  .workout-time {
+    display: flex;
+    align-items: baseline;
+  }
+  
+  .time-unit {
+    font-size: 16px;
+    color: #9ca3af;
+    margin-left: 4px;
+  }
+  
+  /* Categories grid */
+  .workout-categories {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0 20px 20px;
+  }
+  
+  .category-card {
+    background-color: #f9fafb;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: background-color 0.2s;
+    cursor: pointer;
+  }
+  
+  .category-card:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .category-image {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  
+  .category-image img {
+    height: 100%;
+  }
+  
+  .category-title {
+    font-weight: 500;
+    color: #111827;
+    text-align: center;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .workout-metrics {
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .workout-categories {
+      grid-template-columns: 1fr;
+    }
+  }

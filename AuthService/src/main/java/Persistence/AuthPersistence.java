@@ -1,4 +1,4 @@
-package Model;
+package Persistence;
 
 import java.sql.*;
 import java.util.logging.Level;
@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 /**
  * Data access model for authentication
  */
-public class AuthModel {
+public class AuthPersistence {
     
-    private static final Logger LOGGER = Logger.getLogger(AuthModel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AuthPersistence.class.getName());
     private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "student123";

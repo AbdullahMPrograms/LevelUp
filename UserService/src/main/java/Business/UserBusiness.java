@@ -1,7 +1,7 @@
 package Business;
 
 import Helper.UserInfo;
-import Model.UserModel;
+import Persistence.UserPersistence;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +25,7 @@ public class UserBusiness {
         }
         
         try {
-            UserInfo user = UserModel.read(email, password);
+            UserInfo user = UserPersistence.read(email, password);
             return (user != null && user.getPassword().equals(password));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error during authentication: {0}", e.getMessage());
@@ -41,7 +41,7 @@ public class UserBusiness {
      */
     public static String getUsernameByEmail(String email) {
         try {
-            UserInfo user = UserModel.read(email, "");
+            UserInfo user = UserPersistence.read(email, "");
             return (user != null) ? user.getUsername() : null;
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error retrieving username: {0}", e.getMessage());
@@ -56,7 +56,7 @@ public class UserBusiness {
      * @return Result message of the creation attempt
      */
     public static String createUser(UserInfo newUser) {
-        return UserModel.create(newUser);
+        return UserPersistence.create(newUser);
     }
     
     /**
@@ -66,7 +66,7 @@ public class UserBusiness {
      * @return User information if found, null otherwise
      */
     public static UserInfo getUserById(int userId) {
-        return UserModel.getUserById(userId);
+        return UserPersistence.getUserById(userId);
     }
     
     /**
@@ -76,6 +76,6 @@ public class UserBusiness {
      * @return User information if found, null otherwise
      */
     public static UserInfo getUserByEmail(String email) {
-        return UserModel.read(email, "");
+        return UserPersistence.read(email, "");
     }
 }

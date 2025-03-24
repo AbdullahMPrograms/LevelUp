@@ -1,7 +1,7 @@
 package Business;
 
-import Model.AuthModel;
-import Util.JWTUtil;
+import Persistence.AuthPersistence;
+import Helper.JWTHelper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +28,7 @@ public class AuthBusiness {
             }
             
             // Authenticate against database
-            Object[] authResult = AuthModel.authenticateUser(email, password);
+            Object[] authResult = AuthPersistence.authenticateUser(email, password);
             
             if (authResult == null) {
                 LOGGER.warning("Error during authentication");
@@ -40,7 +40,7 @@ public class AuthBusiness {
             
             if (isAuthenticated) {
                 // Generate JWT token
-                String token = JWTUtil.createToken(username, email);
+                String token = JWTHelper.createToken(username, email);
                 LOGGER.info("User authenticated successfully: " + email);
                 return new Object[] { true, token, username };
             } else {
@@ -67,11 +67,11 @@ public class AuthBusiness {
                 return new Object[] { false, null, null };
             }
             
-            boolean isValid = JWTUtil.verifyToken(token);
+            boolean isValid = JWTHelper.verifyToken(token);
             
             if (isValid) {
-                String username = JWTUtil.getUsernameFromToken(token);
-                String email = JWTUtil.getEmailFromToken(token);
+                String username = JWTHelper.getUsernameFromToken(token);
+                String email = JWTHelper.getEmailFromToken(token);
                 return new Object[] { true, username, email };
             } else {
                 return new Object[] { false, null, null };

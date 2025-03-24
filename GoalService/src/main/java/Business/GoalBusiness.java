@@ -1,7 +1,7 @@
 package Business;
 
 import Helper.GoalInfo;
-import Model.GoalModel;
+import Persistence.GoalPersistence;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,7 +19,7 @@ public class GoalBusiness {
      */
     public static String createGoal(GoalInfo newGoal) {
         LOGGER.info("Creating new goal: " + newGoal.getTitle());
-        return GoalModel.create(newGoal);
+        return GoalPersistence.create(newGoal);
     }
     
     /**
@@ -30,7 +30,7 @@ public class GoalBusiness {
      */
     public static List<GoalInfo> getUserGoals(int userID) {
         LOGGER.info("Getting goals for user ID: " + userID);
-        GoalModel model = new GoalModel();
+        GoalPersistence model = new GoalPersistence();
         return model.getAllUserGoals(userID);
     }
 }
