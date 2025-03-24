@@ -5,10 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.Base64;
-
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -35,7 +31,6 @@ import Persistence.UserPersistence;
  */
 @WebServlet(name = "GoalServlet", urlPatterns = {"/api/goals/*", "/api/goals"})
 public class GoalServlet extends HttpServlet {
-    private static final Logger LOGGER = Logger.getLogger(GoalServlet.class.getName());
     
     // MUST match the key in FrontendService's Authentication class
     private static final String SECRET_KEY = "abcdefghijklmnopqrstuvwxyz1234567890";
@@ -44,8 +39,8 @@ public class GoalServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        LOGGER.info("GoalServlet initializing...");
-        LOGGER.info("Secret key first 5 chars: " + SECRET_KEY.substring(0, 5) + "...");
+        System.out.println("GoalServlet initializing...");
+        System.out.println("Secret key first 5 chars: " + SECRET_KEY.substring(0, 5) + "...");
     }
 
     /**
@@ -57,10 +52,10 @@ public class GoalServlet extends HttpServlet {
         if (userIDStr != null && !userIDStr.isEmpty()) {
             try {
                 int userId = Integer.parseInt(userIDStr);
-                LOGGER.info("Using user ID from request parameter: " + userId);
+                System.out.println("Using user ID from request parameter: " + userId);
                 return userId;
             } catch (NumberFormatException e) {
-                LOGGER.warning("Invalid userID format: " + userIDStr);
+                System.out.println("Invalid userID format: " + userIDStr);
                 return -1;
             }
         }
@@ -71,7 +66,7 @@ public class GoalServlet extends HttpServlet {
             try {
                 // Extract token
                 String token = authHeader.substring(7); // Remove "Bearer " prefix
-                LOGGER.info("Found JWT token in Authorization header");
+                System.out.println("Found JWT token in Authorization header");
                 
                 // Parse and verify the JWT - USING THE SAME KEY AS FRONTEND
                 Jws<Claims> jws = Jwts.parserBuilder()
@@ -83,28 +78,28 @@ public class GoalServlet extends HttpServlet {
                 String username = jws.getBody().getSubject();
                 String email = jws.getBody().get("email", String.class);
                 
-                LOGGER.info("JWT verified for user: " + username + " with email: " + email);
+                System.out.println("JWT verified for user: " + username + " with email: " + email);
                 
                 // Look up user ID from the database using the email
                 int userId = getUserIdFromEmail(email);
                 if (userId > 0) {
-                    LOGGER.info("Found user ID: " + userId + " for email: " + email);
+                    System.out.println("Found user ID: " + userId + " for email: " + email);
                     return userId;
                 } else {
-                    LOGGER.warning("Could not find user ID for email: " + email);
+                    System.out.println("Could not find user ID for email: " + email);
                     return -1;
                 }
                 
             } catch (JwtException e) {
-                LOGGER.log(Level.WARNING, "Invalid JWT token: " + e.getMessage(), e);
+                System.out.println("Invalid JWT token: " + e.getMessage());
                 return -1;
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Error processing JWT: " + e.getMessage(), e);
+                System.out.println("Error processing JWT: " + e.getMessage());
                 return -1;
             }
         }
         
-        LOGGER.warning("No valid authentication found in request");
+        System.out.println("No valid authentication found in request");
         return -1;
     }
     
@@ -116,7 +111,7 @@ public class GoalServlet extends HttpServlet {
             // Use the UserPersistence to look up the user ID
             return UserPersistence.getUserIdFromEmail(email);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error getting user ID: " + e.getMessage(), e);
+            System.out.println( "Error getting user ID: " + e.getMessage());
             return -1;
         }
     }
@@ -127,24 +122,24 @@ public class GoalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        LOGGER.info("GoalServlet GET request received");
-        LOGGER.info("Request URI: " + request.getRequestURI());
-        LOGGER.info("Context Path: " + request.getContextPath());
-        LOGGER.info("Servlet Path: " + request.getServletPath());
-        LOGGER.info("Path Info: " + request.getPathInfo());
+        System.out.println("GoalServlet GET request received");
+        System.out.println("Request URI: " + request.getRequestURI());
+        System.out.println("Context Path: " + request.getContextPath());
+        System.out.println("Servlet Path: " + request.getServletPath());
+        System.out.println("Path Info: " + request.getPathInfo());
         
         try {
             // Extract user ID from request
             int userID = extractUserID(request);
             if (userID <= 0) {
-                LOGGER.warning("Authentication failed: userID=" + userID);
+                System.out.println("Authentication failed: userID=" + userID);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
                 response.getWriter().write("{\"error\": \"Authentication failed. Please login.\"}");
                 return;
             }
             
-            LOGGER.info("GET request for goals - User ID: " + userID);
+            System.out.println("GET request for goals - User ID: " + userID);
             
             // Get goals from business layer
             List<GoalInfo> goals = GoalBusiness.getUserGoals(userID);
@@ -177,11 +172,11 @@ public class GoalServlet extends HttpServlet {
                 }
                 
                 jsonBuilder.append("]");
-                LOGGER.info("Sending JSON response with " + goals.size() + " goals");
+                System.out.println("Sending JSON response with " + goals.size() + " goals");
                 out.print(jsonBuilder.toString());
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error in GoalServlet doGet: " + e.getMessage(), e);
+            System.out.println("Error in GoalServlet doGet: " + e.getMessage());
             sendErrorResponse(response, "Internal server error: " + e.getMessage(), 
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
@@ -201,7 +196,7 @@ public class GoalServlet extends HttpServlet {
                 return;
             }
             
-            LOGGER.info("POST request to create goal - User ID: " + userID);
+            System.out.println("POST request to create goal - User ID: " + userID);
             
             // Read JSON from request body
             StringBuilder sb = new StringBuilder();
@@ -217,7 +212,7 @@ public class GoalServlet extends HttpServlet {
             try (JsonReader jsonReader = Json.createReader(new StringReader(sb.toString()))) {
                 jsonRequest = jsonReader.readObject();
             } catch (Exception e) {
-                LOGGER.warning("Invalid JSON format: " + e.getMessage());
+                System.out.println("Invalid JSON format: " + e.getMessage());
                 sendErrorResponse(response, "Invalid JSON format", HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
@@ -269,12 +264,12 @@ public class GoalServlet extends HttpServlet {
                 }
                 
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Error processing goal data: " + e.getMessage(), e);
+                System.out.println("Error processing goal data: " + e.getMessage());
                 sendErrorResponse(response, "Error processing goal data", HttpServletResponse.SC_BAD_REQUEST);
             }
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error in GoalServlet doPost: " + e.getMessage(), e);
+            System.out.println("Error in GoalServlet doPost: " + e.getMessage());
             sendErrorResponse(response, "Internal server error: " + e.getMessage(), 
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

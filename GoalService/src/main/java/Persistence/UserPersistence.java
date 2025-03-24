@@ -5,14 +5,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Model for user-related database operations
  */
 public class UserPersistence {
-    private static final Logger LOGGER = Logger.getLogger(UserPersistence.class.getName());
     private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "student123";
@@ -33,11 +30,11 @@ public class UserPersistence {
      */
     public static int getUserIdFromEmail(String email) {
         if (email == null || email.isEmpty()) {
-            LOGGER.warning("Empty email provided to getUserIdFromEmail");
+            System.out.println("Empty email provided to getUserIdFromEmail");
             return -1;
         }
         
-        LOGGER.info("Looking up user ID for email: " + email);
+        System.out.println("Looking up user ID for email: " + email);
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -45,7 +42,7 @@ public class UserPersistence {
         try {
             con = getConnection();
             String query = "SELECT USER_ID FROM USER WHERE EMAIL = ?";
-            LOGGER.fine("Executing query: " + query);
+            System.out.println("Executing query: " + query);
             
             stmt = con.prepareStatement(query);
             stmt.setString(1, email);
@@ -53,22 +50,22 @@ public class UserPersistence {
             rs = stmt.executeQuery();
             if (rs.next()) {
                 int userId = rs.getInt("USER_ID");
-                LOGGER.info("Found user ID: " + userId + " for email: " + email);
+                System.out.println("Found user ID: " + userId + " for email: " + email);
                 return userId;
             } else {
-                LOGGER.warning("No user found with email: " + email);
+                System.out.println("No user found with email: " + email);
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Database error looking up user ID: " + e.getMessage(), e);
+            System.out.println("Database error looking up user ID: " + e.getMessage());
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "JDBC driver not found: " + e.getMessage(), e);
+            System.out.println("JDBC driver not found: " + e.getMessage());
         } finally {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
                 if (con != null) con.close();
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", e);
+                System.out.println("Error closing database resources" + e.getMessage());
             }
         }
         

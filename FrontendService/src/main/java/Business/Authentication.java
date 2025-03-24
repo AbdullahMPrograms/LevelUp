@@ -5,15 +5,12 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.util.AbstractMap;
 import java.util.Date;
 import java.util.Map.Entry;
-import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -21,12 +18,10 @@ import java.nio.charset.StandardCharsets;
  */
 public class Authentication {
 
-    private SignatureAlgorithm signatureAlgorithm;
     private final String SECRET_KEY = "abcdefghijklmnopqrstuvwxyz1234567890";
     private final Key SIGNING_KEY;
 
     public Authentication() {
-        signatureAlgorithm = SignatureAlgorithm.HS256;
         // Use Keys.hmacShaKeyFor instead of Base64.getDecoder().decode
         SIGNING_KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         System.out.println("FrontendService using key: " + SECRET_KEY);

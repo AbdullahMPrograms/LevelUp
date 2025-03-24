@@ -7,13 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import Helper.GoalInfo;
 
 public class GoalPersistence {
-    private static final Logger LOGGER = Logger.getLogger(GoalPersistence.class.getName());
     private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "student123";
@@ -22,15 +19,15 @@ public class GoalPersistence {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             
-            LOGGER.info("Attempting to connect to database...");
+            System.out.println("Attempting to connect to database...");
             Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            LOGGER.info("Connection established successfully");
+            System.out.println("Connection established successfully");
             return con;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "SQL Connection Error: " + e.getMessage(), e);
+            System.out.println("SQL Connection Error: " + e.getMessage());
             throw e;
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Driver Error: " + e.getMessage(), e);
+            System.out.println("Driver Error: " + e.getMessage());
             throw e;
         }
     }
@@ -51,7 +48,7 @@ public class GoalPersistence {
         try {
             conn = getConnection();
             if (conn == null) {
-                LOGGER.severe("Connection is null");
+                System.out.println("Connection is null");
                 return "Database connection failed";
             }
             
@@ -67,25 +64,25 @@ public class GoalPersistence {
             stmt.setString(7, newGoal.getFrequency());
             stmt.setString(8, newGoal.getDescription());
                 
-            LOGGER.info("Executing query: " + query);
+            System.out.println("Executing query: " + query);
             
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
                 result = "goal creation success";
-                LOGGER.info("Goal created successfully");
+                System.out.println("Goal created successfully");
             } else {
                 result = "Failed to insert goal";
-                LOGGER.warning("No rows affected when creating goal");
+                System.out.println("No rows affected when creating goal");
             }
             
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "SQL Error: " + e.getMessage(), e);
+            System.out.println("SQL Error: " + e.getMessage());
             result = "Error: " + e.getMessage();
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Driver Error: " + e.getMessage(), e);
+            System.out.println("Driver Error: " + e.getMessage());
             result = "Error: Driver not found";
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected Error: " + e.getMessage(), e);
+            System.out.println("Unexpected Error: " + e.getMessage());
             result = "Error: Unexpected error occurred";
         } finally {
             // Close resources
@@ -93,7 +90,7 @@ public class GoalPersistence {
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", e);
+                System.out.println("Error closing database resources" + e.getMessage());
             }
         }
         return result;
@@ -107,16 +104,16 @@ public class GoalPersistence {
         
         try {
             conn = getConnection();
-            LOGGER.info("Database connection established");
+            System.out.println("Database connection established");
             
             String query = "SELECT * FROM GOAL WHERE USER_ID = ?";
-            LOGGER.info("Executing query: " + query + " with userID: " + userID);
+            System.out.println("Executing query: " + query + " with userID: " + userID);
             
             stmt = conn.prepareStatement(query);
             stmt.setInt(1, userID);
             
             rs = stmt.executeQuery();
-            LOGGER.info("Query executed successfully");
+            System.out.println("Query executed successfully");
             
             while (rs.next()) {
                 GoalInfo goal = new GoalInfo();
@@ -130,12 +127,12 @@ public class GoalPersistence {
                 goal.setDescription(rs.getString("DESCRIPTION"));
                 
                 goals.add(goal);
-                LOGGER.info("Added goal: " + goal.getTitle());
+                System.out.println("Added goal: " + goal.getTitle());
             }
-            LOGGER.info("Total goals found: " + goals.size());
+            System.out.println("Total goals found: " + goals.size());
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error in getAllUserGoals: " + e.getMessage(), e);
+            System.out.println("Error in getAllUserGoals: " + e.getMessage());
         } finally {
             // Close resources
             try {
@@ -143,7 +140,7 @@ public class GoalPersistence {
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", e);
+                System.out.println("Error closing database resources" + e.getMessage());
             }
         }
         

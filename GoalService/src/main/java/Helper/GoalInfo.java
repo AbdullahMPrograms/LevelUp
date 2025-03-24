@@ -1,7 +1,5 @@
 package Helper;
 
-import java.sql.Date;
-
 public class GoalInfo {
     private int userID;
     private String title, date, metricType, targetValue, targetUnit, frequency, description;

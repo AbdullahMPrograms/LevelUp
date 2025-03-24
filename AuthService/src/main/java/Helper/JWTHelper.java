@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -16,7 +15,6 @@ import java.util.Date;
  */
 public class JWTHelper {
 
-    private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     private static final String SECRET_KEY = "abcdefghijklmnopqrstuvwxyz1234567890"; // 36 chars = 288 bits
     private static final long TOKEN_VALIDITY = 24 * 60 * 60 * 1000; // 24 hours
     

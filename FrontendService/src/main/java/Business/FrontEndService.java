@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -25,30 +23,29 @@ public class FrontEndService extends HttpServlet {
 
     Authentication auth;
     private final String authenticationCookieName = "login_token";
-    private static final Logger LOGGER = Logger.getLogger(FrontEndService.class.getName());
 
     public FrontEndService() {
         auth = new Authentication();
-        LOGGER.info("FrontEndService initialized with cookie name: " + authenticationCookieName);
+        System.out.println("FrontEndService initialized with cookie name: " + authenticationCookieName);
     }
 
     private Map.Entry<String, String> isAuthenticated(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         String token = "";
         
-        LOGGER.info("Checking for authentication token");
+        System.out.println("Checking for authentication token");
         try {
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals(authenticationCookieName)) {
                         token = cookie.getValue();
-                        LOGGER.fine("Found login token cookie");
+                        System.out.println("Found login token cookie");
                         break;
                     }
                 }
             }
         } catch (Exception e) {
-            LOGGER.warning("Error checking cookies: " + e.getMessage());
+            System.out.println("Error checking cookies: " + e.getMessage());
         }
         
         if (!token.isEmpty()) {
@@ -60,7 +57,7 @@ public class FrontEndService extends HttpServlet {
                     return new AbstractMap.SimpleEntry<>(token, verifyResult.getValue());
                 }
             } catch (UnsupportedEncodingException ex) {
-                LOGGER.log(Level.SEVERE, "Error verifying token", ex);
+                System.out.println("Error verifying token" + ex.getMessage());
             }
         }
 
@@ -86,7 +83,6 @@ public class FrontEndService extends HttpServlet {
             System.out.println("Auth result received: " + (authResult != null ? authResult.toString() : "null"));
             
             if (authResult != null) {
-                // IMPORTANT: Check the actual structure of the response
                 boolean success = authResult.getBoolean("success", false);
                 
                 if (success) {

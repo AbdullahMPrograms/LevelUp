@@ -1,15 +1,12 @@
 package Persistence;
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Data access model for authentication
  */
 public class AuthPersistence {
     
-    private static final Logger LOGGER = Logger.getLogger(AuthPersistence.class.getName());
     private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "student123";
@@ -26,10 +23,8 @@ public class AuthPersistence {
             Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to connect to database", e);
             throw e;
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "MySQL JDBC Driver not found", e);
             throw e;
         }
     }
@@ -84,7 +79,8 @@ public class AuthPersistence {
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", e);
+                System.out.println("Error closing resources: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -119,7 +115,7 @@ public class AuthPersistence {
             }
             
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Error getting user by email", e);
+            System.out.println("Error getting user by email" + e.getMessage());
             return null;
         } finally {
             try {
@@ -127,7 +123,7 @@ public class AuthPersistence {
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error closing database resources", e);
+                System.out.println("Error closing database resources" + e.getMessage());
             }
         }
     }

@@ -3,13 +3,11 @@ package Business;
 import Helper.GoalInfo;
 import Persistence.GoalPersistence;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Business logic for goal operations
  */
 public class GoalBusiness {
-    private static final Logger LOGGER = Logger.getLogger(GoalBusiness.class.getName());
 
     /**
      * Creates a new goal
@@ -18,7 +16,7 @@ public class GoalBusiness {
      * @return Result message of goal creation attempt
      */
     public static String createGoal(GoalInfo newGoal) {
-        LOGGER.info("Creating new goal: " + newGoal.getTitle());
+        System.out.println("Creating new goal: " + newGoal.getTitle());
         return GoalPersistence.create(newGoal);
     }
     
@@ -29,7 +27,7 @@ public class GoalBusiness {
      * @return List of goals for the user
      */
     public static List<GoalInfo> getUserGoals(int userID) {
-        LOGGER.info("Getting goals for user ID: " + userID);
+        System.out.println("Getting goals for user ID: " + userID);
         GoalPersistence model = new GoalPersistence();
         return model.getAllUserGoals(userID);
     }

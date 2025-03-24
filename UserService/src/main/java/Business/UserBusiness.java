@@ -2,16 +2,12 @@ package Business;
 
 import Helper.UserInfo;
 import Persistence.UserPersistence;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Business logic for user operations
  */
 public class UserBusiness {
-    
-    private static final Logger LOGGER = Logger.getLogger(UserBusiness.class.getName());
-    
+        
     /**
      * Verifies if a user is authenticated based on email and password
      * 
@@ -28,7 +24,7 @@ public class UserBusiness {
             UserInfo user = UserPersistence.read(email, password);
             return (user != null && user.getPassword().equals(password));
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error during authentication: {0}", e.getMessage());
+            System.out.println("Error during authentication: {0}" + e.getMessage());
             return false;
         }
     }
@@ -44,7 +40,7 @@ public class UserBusiness {
             UserInfo user = UserPersistence.read(email, "");
             return (user != null) ? user.getUsername() : null;
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error retrieving username: {0}", e.getMessage());
+            System.out.println("Error retrieving username: {0}" + e.getMessage());
             return null;
         }
     }

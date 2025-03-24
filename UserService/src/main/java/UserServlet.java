@@ -12,8 +12,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.io.BufferedReader;
 
 /**
@@ -21,9 +19,7 @@ import java.io.BufferedReader;
  */
 @WebServlet(name = "UserServlet", urlPatterns = {"/api/users/*"})
 public class UserServlet extends HttpServlet {
-    
-    private static final Logger LOGGER = Logger.getLogger(UserServlet.class.getName());
-    
+        
     /**
      * Handles GET requests for user data
      */

@@ -2,16 +2,11 @@ package Business;
 
 import Persistence.AuthPersistence;
 import Helper.JWTHelper;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Business logic for authentication
  */
-public class AuthBusiness {
-    
-    private static final Logger LOGGER = Logger.getLogger(AuthBusiness.class.getName());
-    
+public class AuthBusiness {    
     /**
      * Authenticate a user and generate JWT token
      * 
@@ -23,7 +18,7 @@ public class AuthBusiness {
         try {
             // Validate input
             if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
-                LOGGER.warning("Empty email or password provided");
+                System.out.println("Empty email or password provided");
                 return new Object[] { false, null, null };
             }
             
@@ -31,7 +26,7 @@ public class AuthBusiness {
             Object[] authResult = AuthPersistence.authenticateUser(email, password);
             
             if (authResult == null) {
-                LOGGER.warning("Error during authentication");
+                System.out.println("Error during authentication");
                 return new Object[] { false, null, null };
             }
             
@@ -41,15 +36,15 @@ public class AuthBusiness {
             if (isAuthenticated) {
                 // Generate JWT token
                 String token = JWTHelper.createToken(username, email);
-                LOGGER.info("User authenticated successfully: " + email);
+                System.out.println("User authenticated successfully: " + email);
                 return new Object[] { true, token, username };
             } else {
-                LOGGER.info("Authentication failed for: " + email);
+                System.out.println("Authentication failed for: " + email);
                 return new Object[] { false, null, null };
             }
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error in authentication process", e);
+            System.out.println("Error in authentication process" + e.getMessage());
             return new Object[] { false, null, null };
         }
     }
@@ -78,7 +73,7 @@ public class AuthBusiness {
             }
             
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error verifying token", e);
+            System.out.println("Error verifying token" + e.getMessage());
             return new Object[] { false, null, null };
         }
     }
