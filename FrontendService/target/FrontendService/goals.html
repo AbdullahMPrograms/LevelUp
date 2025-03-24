@@ -390,21 +390,11 @@
                 lucide.createIcons();
                 goalDetails.init();
             })
-            .catch(error => {
-                console.error('Error loading goals:', error);
-                const goalsList = document.querySelector('.goals-list');
-                
-                if (error.message.includes("401")) {
-                    // Authentication error - add login link
-                    goalsList.innerHTML = `
-                        <div class="error-loading">
-                            Error: You need to be logged in to view goals.<br>
-                            <a href="login.html" class="login-link">Login Now</a>
-                        </div>`;
-                } else {
+               .catch(error => {
+                    console.error('Detailed error:', error);
+                    const goalsList = document.querySelector('.goals-list');
                     goalsList.innerHTML = `<div class="error-loading">Error loading goals: ${error.message}</div>`;
-                }
-            });
+                });
         }
         
         // Map metric type to proper display label for the metric label
