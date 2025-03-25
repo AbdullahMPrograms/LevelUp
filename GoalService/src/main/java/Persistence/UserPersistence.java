@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * Model for user-related database operations
  */
 public class UserPersistence {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/userdb?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "student123";
     

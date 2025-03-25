@@ -11,7 +11,7 @@ import java.util.List;
 import Helper.GoalInfo;
 
 public class GoalPersistence {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/goaldb?zeroDateTimeBehavior=CONVERT_TO_NULL";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "student123";
 
