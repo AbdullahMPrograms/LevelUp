@@ -165,20 +165,22 @@ public class ServiceClient {
      * Creates a new goal through the Goal Service
      * 
      * @param goalInfo JSON with goal information
+     * @param token Authentication token
      * @return true if goal was created, false otherwise
-     */    
-    public static boolean createGoal(JsonObject goalInfo) {
+     */
+    public static boolean createGoal(JsonObject goalInfo, String token) {
         try {
-            System.out.println("Creating goal: " + goalInfo.getString("title", ""));
+            System.out.println("Creating goal: " + goalInfo.getString("title"));
             System.out.println("Using Goal Service URL: " + GOAL_SERVICE_URL);
             
             // Create client
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target(GOAL_SERVICE_URL).path("/api/goals");
             
-            // Send request
+            // Send request with Authorization header including the token
             Response response = target
                     .request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token) // Add JWT token to request
                     .post(Entity.entity(goalInfo.toString(), MediaType.APPLICATION_JSON));
             
             System.out.println("Create goal response status: " + response.getStatus());

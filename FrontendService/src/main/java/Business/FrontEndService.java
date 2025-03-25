@@ -177,8 +177,18 @@ public class FrontEndService extends HttpServlet {
                     String frequency = request.getParameter("frequency");
                     String description = request.getParameter("description");
                     
-                    // Create a goal info object
-                    JsonObject userGoal = Json.createObjectBuilder()
+                    // Get authenticated user token
+                    Map.Entry<String, String> authResult = isAuthenticated(request);
+                    token = authResult.getKey();
+                    username = authResult.getValue();
+
+                    if (token.isEmpty()) {
+                        response.sendRedirect("login.html?error=auth_required");
+                        return;
+                    }
+
+                    // Create goal JSON
+                    JsonObject goalInfo = Json.createObjectBuilder()
                             .add("title", title)
                             .add("date", date)
                             .add("metricType", metricType)
@@ -187,10 +197,10 @@ public class FrontEndService extends HttpServlet {
                             .add("frequency", frequency)
                             .add("description", description)
                             .build();
-                    
-                    // Call Goal Service to create a goal
-                    boolean goalSuccess = ServiceClient.createGoal(userGoal);
-                    
+
+                    // Pass token to createGoal method
+                    boolean goalSuccess = ServiceClient.createGoal(goalInfo, token);
+
                     if (goalSuccess) {
                         // Goal created successfully
                         System.out.println("Goal created successfully");
@@ -277,9 +287,9 @@ public class FrontEndService extends HttpServlet {
                         }
                     } else {
                         // Fall back to cookie check
-                        Map.Entry<String, String> authResult = isAuthenticated(request);
-                        token = authResult.getKey();
-                        userFromToken = authResult.getValue();
+                        Map.Entry<String, String> authData = isAuthenticated(request);
+                        token = authData.getKey();
+                        userFromToken = authData.getValue();
                     }
                     
                     System.out.println("Authentication check - Token empty: " + token.isEmpty());
