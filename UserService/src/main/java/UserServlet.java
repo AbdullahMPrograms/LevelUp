@@ -105,11 +105,19 @@ public class UserServlet extends HttpServlet {
     }
     
     /**
-     * Handles POST requests for creating new users
+     * Handles POST requests for user operations
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    
+        String pathInfo = request.getPathInfo();
+        
+        // Handle authentication endpoint
+        if (pathInfo != null && pathInfo.equals("/authenticate")) {
+            handleAuthentication(request, response);
+            return;
+        }
         
         // Read JSON from request body
         StringBuilder sb = new StringBuilder();
@@ -167,6 +175,49 @@ public class UserServlet extends HttpServlet {
             }
         } catch (Exception e) {
             sendErrorResponse(response, "Missing required fields");
+        }
+    }
+    
+    /**
+     * Handle authentication requests
+     */
+    private void handleAuthentication(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+    
+        // Read JSON from request body
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = request.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        
+        // Parse JSON
+        JsonObject jsonRequest;
+        try (JsonReader jsonReader = Json.createReader(new StringReader(sb.toString()))) {
+            jsonRequest = jsonReader.readObject();
+        } catch (Exception e) {
+            sendErrorResponse(response, "Invalid JSON format");
+            return;
+        }
+        
+        // Extract credentials
+        String email = jsonRequest.getString("email", "");
+        String password = jsonRequest.getString("password", "");
+        
+        // Authenticate user
+        boolean isAuthenticated = UserBusiness.isAuthenticated(email, password);
+        
+        // Send response
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        
+        JsonObjectBuilder responseBuilder = Json.createObjectBuilder()
+                .add("authenticated", isAuthenticated);
+                
+        try (PrintWriter out = response.getWriter()) {
+            out.print(responseBuilder.build().toString());
         }
     }
     

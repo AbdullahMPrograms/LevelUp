@@ -1,87 +1,135 @@
 package Persistence;
 
-import java.sql.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import java.io.StringReader;
 
 /**
  * Data access model for authentication
  */
 public class AuthPersistence {
     
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/levelup?zeroDateTimeBehavior=CONVERT_TO_NULL";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "student123";
+    private static final String USER_SERVICE_URL = "http://localhost:8080/UserService/api/users";
     
     /**
-     * Get a database connection
+     * Call the UserService API to get user information
      * 
-     * @return Connection object
-     * @throws SQLException if connection fails
-     * @throws ClassNotFoundException if MySQL driver not found
+     * @param email User email
+     * @return JsonObject containing user data or null if not found/error
      */
-    private static Connection getConnection() throws SQLException, ClassNotFoundException {
+    private static JsonObject getUserFromService(String email) {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-        } catch (SQLException e) {
-            throw e;
-        } catch (ClassNotFoundException e) {
-            throw e;
+            // URL encode the email parameter
+            String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8.toString());
+            URL url = new URL(USER_SERVICE_URL + "?email=" + encodedEmail);
+            
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+            
+            int responseCode = conn.getResponseCode();
+            System.out.println("UserService API Response Code: " + responseCode);
+            
+            if (responseCode == 200) { // Success
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+                
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                
+                // Parse the JSON response
+                JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
+                JsonObject jsonObject = jsonReader.readObject();
+                jsonReader.close();
+                
+                return jsonObject;
+            } else {
+                System.out.println("Failed to get user data from UserService");
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("Error calling UserService API: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
     
     /**
-     * Verify user credentials
+     * Verify user credentials by calling UserService API
      * 
      * @param email User email
      * @param password User password
      * @return Object array with [isAuthenticated, username] or null if error
      */
     public static Object[] authenticateUser(String email, String password) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        
         try {
-            conn = getConnection();
-            String query = "SELECT * FROM `USER` WHERE EMAIL = ?";
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, email);
+            // Get user data from UserService
+            JsonObject userData = getUserFromService(email);
             
-            System.out.println("Executing query for email: " + email);
-            
-            rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                String storedPassword = rs.getString("PASSWORD");
-                String username = rs.getString("USER_NAME");
-                
-                System.out.println("User found. Comparing passwords:");
-                System.out.println("Stored password: " + storedPassword);
-                System.out.println("Provided password: " + password);
-                
-                boolean isAuthenticated = storedPassword.equals(password);
-                System.out.println("Password match: " + isAuthenticated);
-                
-                return new Object[] { isAuthenticated, username };
-            } else {
-                System.out.println("No user found with email: " + email);
+            if (userData == null || userData.containsKey("error")) {
+                System.out.println("User not found or error from UserService");
                 return new Object[] { false, null };
             }
             
-        } catch (SQLException | ClassNotFoundException e) {
+            // Extract user information
+            String username = userData.getString("username");
+            
+            // Create a second API call to verify credentials
+            URL authUrl = new URL(USER_SERVICE_URL + "/authenticate");
+            HttpURLConnection conn = (HttpURLConnection) authUrl.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+            
+            // Create JSON payload with email and password
+            String jsonPayload = Json.createObjectBuilder()
+                .add("email", email)
+                .add("password", password)
+                .build().toString();
+            
+            conn.getOutputStream().write(jsonPayload.getBytes(StandardCharsets.UTF_8));
+            
+            int responseCode = conn.getResponseCode();
+            System.out.println("Authentication API Response Code: " + responseCode);
+            
+            boolean isAuthenticated = false;
+            
+            if (responseCode == 200) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+                
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                
+                // Parse the JSON response
+                JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
+                JsonObject authResponse = jsonReader.readObject();
+                jsonReader.close();
+                
+                isAuthenticated = authResponse.getBoolean("authenticated", false);
+            }
+            
+            System.out.println("Authentication result for " + email + ": " + isAuthenticated);
+            return new Object[] { isAuthenticated, username };
+            
+        } catch (Exception e) {
             System.out.println("Error authenticating user: " + e.getMessage());
             e.printStackTrace();
-            return null;
-        } finally {
-            // Close resources
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                System.out.println("Error closing resources: " + e.getMessage());
-                e.printStackTrace();
-            }
+            return new Object[] { false, null };
         }
     }
     
@@ -92,39 +140,24 @@ public class AuthPersistence {
      * @return Object array with [userId, username, email] or null if not found
      */
     public static Object[] getUserByEmail(String email) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        
         try {
-            conn = getConnection();
-            String query = "SELECT * FROM `USER` WHERE EMAIL = ?";
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, email);
+            // Get user data from UserService
+            JsonObject userData = getUserFromService(email);
             
-            rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                int userId = rs.getInt("USER_ID");
-                String username = rs.getString("USER_NAME");
-                String userEmail = rs.getString("EMAIL");
-                
-                return new Object[] { userId, username, userEmail };
-            } else {
+            if (userData == null || userData.containsKey("error")) {
                 return null;
             }
             
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println("Error getting user by email" + e.getMessage());
+            // Extract user information
+            int userId = userData.getInt("id");
+            String username = userData.getString("username");
+            String userEmail = userData.getString("email");
+            
+            return new Object[] { userId, username, userEmail };
+            
+        } catch (Exception e) {
+            System.out.println("Error getting user by email: " + e.getMessage());
             return null;
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                System.out.println("Error closing database resources" + e.getMessage());
-            }
         }
     }
 }
