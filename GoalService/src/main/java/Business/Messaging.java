@@ -1,8 +1,6 @@
 // GoalService/src/main/java/Business/Messaging.java
 package Business;
 
-import Helper.GoalInfo; // May not be needed directly here
-import Persistence.GoalPersistence; // Add import for your GoalPersistence
 import io.kubemq.sdk.basic.ServerAddressNotSuppliedException;
 import io.kubemq.sdk.event.EventReceive;
 import io.kubemq.sdk.event.Subscriber;
@@ -11,7 +9,6 @@ import io.kubemq.sdk.subscription.SubscribeRequest;
 import io.kubemq.sdk.subscription.SubscribeType;
 import io.kubemq.sdk.tools.Converter;
 import io.grpc.stub.StreamObserver;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,13 +19,13 @@ public class Messaging {
     private static final Logger LOGGER = Logger.getLogger(Messaging.class.getName());
 
     public static void Receiving_Events_Store(String channelName) throws SSLException, ServerAddressNotSuppliedException {
-        String clientID = "goal-service-subscriber"; // Unique client ID for this subscriber
+        String clientID = "goal-service-subscriber";
         String kubeMQAddress = System.getenv("kubeMQAddress");
 
-         // Handle cases where the env variable might not be set (for local testing)
+         // Handle cases where the env variable might not be set (for local testing before upload to google cloud)
         if (kubeMQAddress == null || kubeMQAddress.isEmpty()) {
             System.out.println("Warning: kubeMQAddress environment variable not set. Using default localhost:50000");
-            kubeMQAddress = "localhost:50000"; // Default for local KubeMQ instance
+            kubeMQAddress = "localhost:50000";
         }
          System.out.println("Subscribing to KubeMQ at: " + kubeMQAddress + " on channel: " + channelName);
 
@@ -38,7 +35,6 @@ public class Messaging {
         subscribeRequest.setClientID(clientID);
         subscribeRequest.setSubscribeType(SubscribeType.EventsStore); // Use EventsStore to get past messages too
         subscribeRequest.setEventsStoreType(EventsStoreType.StartFromFirst); // Start from the beginning
-        // subscribeRequest.setEventsStoreTypeValue(1L); // Use StartFromFirst instead
 
         StreamObserver<EventReceive> streamObserver = new StreamObserver<EventReceive>() {
 
@@ -49,7 +45,6 @@ public class Messaging {
                     LOGGER.log(Level.INFO, "Event Received: ID:{0}, Channel:{1}, Body:{2}",
                             new Object[]{eventReceive.getEventId(), eventReceive.getChannel(), messageBody});
 
-                    // **** YOUR LOGIC HERE ****
                     // Parse the message: CREATED:{USER_ID}:{USERNAME}:{EMAIL}
                     String[] parts = messageBody.split(":");
                     if (parts.length == 4 && "CREATED".equals(parts[0])) {
@@ -61,7 +56,6 @@ public class Messaging {
                             LOGGER.log(Level.INFO, "Processing CREATED event for UserID: {0}, Username: {1}", new Object[]{userId, username});
 
                             // Call persistence layer to save to the cache table
-                            // You need to create this method in GoalPersistence
                             Persistence.GoalPersistence.saveUserInfoCache(userId, username, email);
 
                             LOGGER.log(Level.INFO, "User info cached successfully for UserID: {0}", userId);
@@ -70,14 +64,13 @@ public class Messaging {
                             LOGGER.log(Level.WARNING, "Could not parse UserID from message: {0}", messageBody);
                         } catch (SQLException e) {
                             LOGGER.log(Level.SEVERE, "Database error caching user info: {0}", e.getMessage());
-                            // Optional: Implement retry logic or dead-letter queue
+                            // Implement retry logic or dead-letter queue
                         } catch (Exception e) {
                             LOGGER.log(Level.SEVERE, "Unexpected error processing message: {0}", e.getMessage());
                         }
                     } else {
                          LOGGER.log(Level.WARNING, "Received message with unexpected format: {0}", messageBody);
                     }
-                    // **** END YOUR LOGIC ****
 
                 } catch (Exception e) {
                      LOGGER.log(Level.SEVERE, "Error processing incoming event: {0}", e.getMessage());

@@ -13,20 +13,20 @@ public class Messaging {
         String clientID = "user-service-publisher";    // Unique client ID
         String kubeMQAddress = System.getenv("kubeMQAddress"); // Get from environment
 
-        // Handle cases where the env variable might not be set (for local testing)
-        if (kubeMQAddress == null || kubeMQAddress.isEmpty()) {
+         // Handle cases where the env variable might not be set (for local testing before upload to google cloud)
+         if (kubeMQAddress == null || kubeMQAddress.isEmpty()) {
             System.out.println("Warning: kubeMQAddress environment variable not set. Using default localhost:50000");
-            kubeMQAddress = "localhost:50000"; // Default for local KubeMQ instance
+            kubeMQAddress = "localhost:50000"; 
         }
         System.out.println("Sending message to KubeMQ at: " + kubeMQAddress + " on channel: " + channelName);
 
         io.kubemq.sdk.event.Channel channel = null;
         try {
             channel = new io.kubemq.sdk.event.Channel(channelName, clientID, false, kubeMQAddress);
-            channel.setStore(true); // Store message if needed
+            channel.setStore(true); 
             Event event = new Event();
             event.setBody(Converter.ToByteArray(message));
-            event.setEventId("event-store-" + clientID); // Optional: Unique event ID
+            event.setEventId("event-store-" + clientID);
 
             channel.SendEvent(event);
             System.out.println("Message sent successfully: " + message);

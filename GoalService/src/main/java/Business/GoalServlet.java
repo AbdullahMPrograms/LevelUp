@@ -48,15 +48,14 @@ public class GoalServlet extends HttpServlet {
     }
 
     /**
-     * Extracts user ID from request - Prefers JWT token and LOCAL CACHE lookup.
-     * Falls back to query param ONLY for testing if needed, but prioritise JWT.
+     * Extracts user ID from request.
      */
     private int extractUserID(HttpServletRequest request) {
-        // 1. Check Authorization Header for JWT FIRST
+        // Check Authorization Header via JWT and local cache lookup
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             try {
-                String token = authHeader.substring(7); // Remove "Bearer " prefix
+                String token = authHeader.substring(7);
                 LOGGER.log(Level.INFO, "Found JWT token in Authorization header. Verifying...");
 
                 Jws<Claims> jws = Jwts.parserBuilder()
@@ -74,44 +73,26 @@ public class GoalServlet extends HttpServlet {
 
                 LOGGER.log(Level.INFO, "JWT verified for user: {0}, email: {1}. Looking up UserID in local cache.", new Object[]{username, email});
 
-                // ***** MODIFIED PART: Use GoalPersistence to query local cache *****
                 int userId = GoalPersistence.getUserIdFromCacheByEmail(email);
-                // ******************************************************************
 
                 if (userId > 0) {
                     LOGGER.log(Level.INFO, "Successfully found UserID {0} in local cache for email {1}", new Object[]{userId, email});
                     return userId;
                 } else {
                     LOGGER.log(Level.WARNING, "UserID for email {0} not found in local cache. Authentication denied.", email);
-                    return -1; // User valid according to JWT, but not found in our cache yet/anymore
+                    return -1;
                 }
 
             } catch (JwtException e) {
                 LOGGER.log(Level.WARNING, "Invalid or expired JWT token: {0}", e.getMessage());
-                return -1; // Invalid token
+                return -1;
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Error processing JWT or querying cache: {0}", e.getMessage());
-                return -1; // Other unexpected errors
-            }
-        }
-
-        // 2. Fallback: Check for userID parameter (mainly for simple testing, less secure)
-        // Consider removing this fallback in production if JWT is mandatory
-        String userIDStr = request.getParameter("userID");
-        if (userIDStr != null && !userIDStr.isEmpty()) {
-             LOGGER.log(Level.WARNING, "Using potentially insecure userID parameter fallback: {0}", userIDStr);
-            try {
-                int userId = Integer.parseInt(userIDStr);
-                 LOGGER.log(Level.INFO, "Using user ID from request parameter: {0}", userId);
-                return userId;
-            } catch (NumberFormatException e) {
-                 LOGGER.log(Level.WARNING, "Invalid userID format in parameter: {0}", userIDStr);
                 return -1;
             }
         }
 
-
-        // 3. No valid authentication found
+        // No valid authentication found
          LOGGER.log(Level.WARNING, "No valid authentication (JWT or userID param) found in request.");
         return -1;
     }
@@ -123,9 +104,8 @@ public class GoalServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
          LOGGER.info("GoalServlet GET request received");
-        // ... existing implementation using extractUserID() ...
         try {
-           // Extract user ID from request using the updated method
+           // Extract user ID from request
            int userID = extractUserID(request);
            if (userID <= 0) {
                 LOGGER.log(Level.WARNING, "GET request failed: User not authenticated or found in cache.");
@@ -143,14 +123,13 @@ public class GoalServlet extends HttpServlet {
            response.setCharacterEncoding("UTF-8");
 
            try (PrintWriter out = response.getWriter()) {
-               // ... (existing JSON building logic) ...
                 StringBuilder jsonBuilder = new StringBuilder("[");
                 for (int i = 0; i < goals.size(); i++) {
                     if (i > 0) jsonBuilder.append(",");
                     GoalInfo goal = goals.get(i);
                     // Escape strings properly
                     jsonBuilder.append("{")
-                        .append("\"id\":\"").append(goal.getUserID()).append("\",") // Assuming GoalInfo has getUserID()
+                        .append("\"id\":\"").append(goal.getUserID()).append("\",")
                         .append("\"title\":\"").append(escapeJson(goal.getTitle())).append("\",")
                         .append("\"targetDate\":\"").append(escapeJson(goal.getDate())).append("\",")
                         .append("\"metricType\":\"").append(escapeJson(goal.getMetricType())).append("\",")
@@ -158,7 +137,6 @@ public class GoalServlet extends HttpServlet {
                         .append("\"targetUnit\":\"").append(escapeJson(goal.getTargetUnit())).append("\",")
                         .append("\"frequency\":\"").append(escapeJson(goal.getFrequency())).append("\",")
                         .append("\"description\":\"").append(escapeJson(goal.getDescription())).append("\"")
-                        // Add progress/completion later if needed
                         .append("}");
                 }
                 jsonBuilder.append("]");
@@ -179,9 +157,7 @@ public class GoalServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
          LOGGER.info("GoalServlet POST request received");
-        // ... existing implementation using extractUserID() ...
          try {
-            // Extract user ID from request using the updated method
             int userID = extractUserID(request);
             if (userID <= 0) {
                 LOGGER.log(Level.WARNING, "POST request failed: User not authenticated or found in cache.");
@@ -276,7 +252,6 @@ public class GoalServlet extends HttpServlet {
             out.print(responseBuilder.build().toString()); 
         }
     }
-
     
     /**
      * Escape JSON strings
