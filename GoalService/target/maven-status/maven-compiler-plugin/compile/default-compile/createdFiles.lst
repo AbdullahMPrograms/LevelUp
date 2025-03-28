@@ -6,4 +6,3 @@ Persistence\GoalPersistence.class
 Business\GoalServlet.class
 Business\Messaging.class
 Business\MyAppServletContextListener.class
-Persistence\UserPersistence.class

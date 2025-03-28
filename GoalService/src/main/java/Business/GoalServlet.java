@@ -22,9 +22,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.logging.Level; 
+import java.util.logging.Logger;
 
 import Helper.GoalInfo;
-import Persistence.UserPersistence;
+import Persistence.GoalPersistence;
+//import Persistence.UserPersistence;
 
 /**
  * Servlet for goal endpoints
@@ -32,9 +35,10 @@ import Persistence.UserPersistence;
 @WebServlet(name = "GoalServlet", urlPatterns = {"/api/goals/*", "/api/goals"})
 public class GoalServlet extends HttpServlet {
     
-    // MUST match the key in FrontendService's Authentication class
     private static final String SECRET_KEY = "abcdefghijklmnopqrstuvwxyz1234567890";
     private static final Key SIGNING_KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    private static final Logger LOGGER = Logger.getLogger(GoalServlet.class.getName());
+
 
     @Override
     public void init() throws ServletException {
@@ -44,179 +48,166 @@ public class GoalServlet extends HttpServlet {
     }
 
     /**
-     * Extracts user ID from request - either from query param or JWT token
+     * Extracts user ID from request - Prefers JWT token and LOCAL CACHE lookup.
+     * Falls back to query param ONLY for testing if needed, but prioritise JWT.
      */
     private int extractUserID(HttpServletRequest request) {
-        // First check for userID parameter (direct access for testing)
-        String userIDStr = request.getParameter("userID");
-        if (userIDStr != null && !userIDStr.isEmpty()) {
-            try {
-                int userId = Integer.parseInt(userIDStr);
-                System.out.println("Using user ID from request parameter: " + userId);
-                return userId;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid userID format: " + userIDStr);
-                return -1;
-            }
-        }
-        
-        // Check authorization header
+        // 1. Check Authorization Header for JWT FIRST
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             try {
-                // Extract token
                 String token = authHeader.substring(7); // Remove "Bearer " prefix
-                System.out.println("Found JWT token in Authorization header");
-                
-                // Parse and verify the JWT - USING THE SAME KEY AS FRONTEND
+                LOGGER.log(Level.INFO, "Found JWT token in Authorization header. Verifying...");
+
                 Jws<Claims> jws = Jwts.parserBuilder()
                         .setSigningKey(SIGNING_KEY)
                         .build()
                         .parseClaimsJws(token);
-                
-                // Get username and email from claims
-                String username = jws.getBody().getSubject();
-                String email = jws.getBody().get("email", String.class);
-                
-                System.out.println("JWT verified for user: " + username + " with email: " + email);
-                
-                // Look up user ID from the database using the email
-                int userId = getUserIdFromEmail(email);
-                if (userId > 0) {
-                    System.out.println("Found user ID: " + userId + " for email: " + email);
-                    return userId;
-                } else {
-                    System.out.println("Could not find user ID for email: " + email);
+
+                String username = jws.getBody().getSubject(); // Username from token subject
+                String email = jws.getBody().get("email", String.class); // Email from token claim
+
+                if (email == null || email.isEmpty()) {
+                    LOGGER.log(Level.WARNING, "JWT is valid but missing 'email' claim.");
                     return -1;
                 }
-                
+
+                LOGGER.log(Level.INFO, "JWT verified for user: {0}, email: {1}. Looking up UserID in local cache.", new Object[]{username, email});
+
+                // ***** MODIFIED PART: Use GoalPersistence to query local cache *****
+                int userId = GoalPersistence.getUserIdFromCacheByEmail(email);
+                // ******************************************************************
+
+                if (userId > 0) {
+                    LOGGER.log(Level.INFO, "Successfully found UserID {0} in local cache for email {1}", new Object[]{userId, email});
+                    return userId;
+                } else {
+                    LOGGER.log(Level.WARNING, "UserID for email {0} not found in local cache. Authentication denied.", email);
+                    return -1; // User valid according to JWT, but not found in our cache yet/anymore
+                }
+
             } catch (JwtException e) {
-                System.out.println("Invalid JWT token: " + e.getMessage());
-                return -1;
+                LOGGER.log(Level.WARNING, "Invalid or expired JWT token: {0}", e.getMessage());
+                return -1; // Invalid token
             } catch (Exception e) {
-                System.out.println("Error processing JWT: " + e.getMessage());
+                LOGGER.log(Level.SEVERE, "Error processing JWT or querying cache: {0}", e.getMessage());
+                return -1; // Other unexpected errors
+            }
+        }
+
+        // 2. Fallback: Check for userID parameter (mainly for simple testing, less secure)
+        // Consider removing this fallback in production if JWT is mandatory
+        String userIDStr = request.getParameter("userID");
+        if (userIDStr != null && !userIDStr.isEmpty()) {
+             LOGGER.log(Level.WARNING, "Using potentially insecure userID parameter fallback: {0}", userIDStr);
+            try {
+                int userId = Integer.parseInt(userIDStr);
+                 LOGGER.log(Level.INFO, "Using user ID from request parameter: {0}", userId);
+                return userId;
+            } catch (NumberFormatException e) {
+                 LOGGER.log(Level.WARNING, "Invalid userID format in parameter: {0}", userIDStr);
                 return -1;
             }
         }
-        
-        System.out.println("No valid authentication found in request");
+
+
+        // 3. No valid authentication found
+         LOGGER.log(Level.WARNING, "No valid authentication (JWT or userID param) found in request.");
         return -1;
-    }
-    
-    /**
-     * Get user ID from email address by querying the database
-     */
-    private int getUserIdFromEmail(String email) {
-        try {
-            // Use the UserPersistence to look up the user ID
-            return UserPersistence.getUserIdFromEmail(email);
-        } catch (Exception e) {
-            System.out.println( "Error getting user ID: " + e.getMessage());
-            return -1;
-        }
     }
 
     /**
      * Handle GET requests - retrieve goals
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("GoalServlet GET request received");
-        System.out.println("Request URI: " + request.getRequestURI());
-        System.out.println("Context Path: " + request.getContextPath());
-        System.out.println("Servlet Path: " + request.getServletPath());
-        System.out.println("Path Info: " + request.getPathInfo());
-        
+         LOGGER.info("GoalServlet GET request received");
+        // ... existing implementation using extractUserID() ...
         try {
-            // Extract user ID from request
-            int userID = extractUserID(request);
-            if (userID <= 0) {
-                System.out.println("Authentication failed: userID=" + userID);
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"Authentication failed. Please login.\"}");
-                return;
-            }
-            
-            System.out.println("GET request for goals - User ID: " + userID);
-            
-            // Get goals from business layer
-            List<GoalInfo> goals = GoalBusiness.getUserGoals(userID);
-            
-            // Send response
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            
-            try (PrintWriter out = response.getWriter()) {
+           // Extract user ID from request using the updated method
+           int userID = extractUserID(request);
+           if (userID <= 0) {
+                LOGGER.log(Level.WARNING, "GET request failed: User not authenticated or found in cache.");
+                sendErrorResponse(response, "User not authenticated or user data not available.", HttpServletResponse.SC_UNAUTHORIZED);
+               return;
+           }
+
+            LOGGER.log(Level.INFO, "GET request for goals - User ID: {0} (from cache/JWT)", userID);
+
+           // Get goals from business layer
+           List<GoalInfo> goals = GoalBusiness.getUserGoals(userID);
+
+           // Send response
+           response.setContentType("application/json");
+           response.setCharacterEncoding("UTF-8");
+
+           try (PrintWriter out = response.getWriter()) {
+               // ... (existing JSON building logic) ...
                 StringBuilder jsonBuilder = new StringBuilder("[");
-                
                 for (int i = 0; i < goals.size(); i++) {
-                    if (i > 0) {
-                        jsonBuilder.append(",");
-                    }
-                    
+                    if (i > 0) jsonBuilder.append(",");
                     GoalInfo goal = goals.get(i);
+                    // Escape strings properly
                     jsonBuilder.append("{")
-                        .append("\"id\":\"").append(goal.getUserID()).append("\",")
+                        .append("\"id\":\"").append(goal.getUserID()).append("\",") // Assuming GoalInfo has getUserID()
                         .append("\"title\":\"").append(escapeJson(goal.getTitle())).append("\",")
                         .append("\"targetDate\":\"").append(escapeJson(goal.getDate())).append("\",")
                         .append("\"metricType\":\"").append(escapeJson(goal.getMetricType())).append("\",")
                         .append("\"targetValue\":\"").append(escapeJson(goal.getTargetValue())).append("\",")
                         .append("\"targetUnit\":\"").append(escapeJson(goal.getTargetUnit())).append("\",")
                         .append("\"frequency\":\"").append(escapeJson(goal.getFrequency())).append("\",")
-                        .append("\"description\":\"").append(escapeJson(goal.getDescription())).append("\",")
-                        .append("\"progress\":0,")
-                        .append("\"completion\":0")
+                        .append("\"description\":\"").append(escapeJson(goal.getDescription())).append("\"")
+                        // Add progress/completion later if needed
                         .append("}");
                 }
-                
                 jsonBuilder.append("]");
-                System.out.println("Sending JSON response with " + goals.size() + " goals");
+                LOGGER.log(Level.INFO, "Sending JSON response with {0} goals for UserID {1}", new Object[]{goals.size(), userID});
                 out.print(jsonBuilder.toString());
-            }
+           }
         } catch (Exception e) {
-            System.out.println("Error in GoalServlet doGet: " + e.getMessage());
-            sendErrorResponse(response, "Internal server error: " + e.getMessage(), 
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+             LOGGER.log(Level.SEVERE, "Error in GoalServlet doGet: {0}", e.getMessage());
+             sendErrorResponse(response, "Internal server error: " + e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
+
 
     /**
      * Handle POST requests - create goals
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            // Extract user ID from request
+         LOGGER.info("GoalServlet POST request received");
+        // ... existing implementation using extractUserID() ...
+         try {
+            // Extract user ID from request using the updated method
             int userID = extractUserID(request);
             if (userID <= 0) {
-                sendErrorResponse(response, "User not authenticated", HttpServletResponse.SC_UNAUTHORIZED);
+                LOGGER.log(Level.WARNING, "POST request failed: User not authenticated or found in cache.");
+                sendErrorResponse(response, "User not authenticated or user data not available.", HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-            
-            System.out.println("POST request to create goal - User ID: " + userID);
-            
+
+             LOGGER.log(Level.INFO, "POST request to create goal - User ID: {0} (from cache/JWT)", userID);
+
             // Read JSON from request body
             StringBuilder sb = new StringBuilder();
             try (BufferedReader reader = request.getReader()) {
                 String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
+                while ((line = reader.readLine()) != null) sb.append(line);
             }
-            
+
             // Parse JSON
             JsonObject jsonRequest;
             try (JsonReader jsonReader = Json.createReader(new StringReader(sb.toString()))) {
                 jsonRequest = jsonReader.readObject();
             } catch (Exception e) {
-                System.out.println("Invalid JSON format: " + e.getMessage());
-                sendErrorResponse(response, "Invalid JSON format", HttpServletResponse.SC_BAD_REQUEST);
+                 LOGGER.log(Level.WARNING, "Invalid JSON format received: {0}", e.getMessage());
+                 sendErrorResponse(response, "Invalid JSON format", HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-            
+
             // Extract goal info
             try {
                 String title = jsonRequest.getString("title", "");
@@ -226,86 +217,75 @@ public class GoalServlet extends HttpServlet {
                 String targetUnit = jsonRequest.getString("targetUnit", "");
                 String frequency = jsonRequest.getString("frequency", "");
                 String description = jsonRequest.getString("description", "");
-                
+
                 // Validate required fields
-                if (title.isEmpty() || date.isEmpty() || metricType.isEmpty() || 
+                if (title.isEmpty() || date.isEmpty() || metricType.isEmpty() ||
                         targetValue.isEmpty() || targetUnit.isEmpty() || frequency.isEmpty()) {
-                    sendErrorResponse(response, "Missing required fields", HttpServletResponse.SC_BAD_REQUEST);
+                     LOGGER.log(Level.WARNING, "Goal creation failed: Missing required fields.");
+                     sendErrorResponse(response, "Missing required fields", HttpServletResponse.SC_BAD_REQUEST);
                     return;
                 }
-                
-                // Create goal object
-                GoalInfo newGoal = new GoalInfo(userID, title, date, metricType, targetValue, 
+
+                // Create goal object, ASSOCIATING THE CORRECT USER ID
+                GoalInfo newGoal = new GoalInfo(userID, title, date, metricType, targetValue,
                         targetUnit, frequency, description);
-                
+
                 // Create the goal
                 String result = GoalBusiness.createGoal(newGoal);
-                
+
                 // Send response
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
-                
-                if (result.contains("success")) {
+
+                if (result.contains("success")) { // Check based on the message from GoalBusiness
+                     LOGGER.log(Level.INFO, "Goal created successfully for UserID: {0}", userID);
                     JsonObjectBuilder responseBuilder = Json.createObjectBuilder()
                             .add("success", true)
                             .add("message", "Goal created successfully");
-                            
-                    try (PrintWriter out = response.getWriter()) {
-                        out.print(responseBuilder.build().toString());
-                    }
+                    try (PrintWriter out = response.getWriter()) { out.print(responseBuilder.build().toString()); }
                 } else {
+                     LOGGER.log(Level.WARNING, "Goal creation failed for UserID {0}: {1}", new Object[]{userID, result});
                     JsonObjectBuilder responseBuilder = Json.createObjectBuilder()
                             .add("success", false)
-                            .add("message", result);
-                            
-                    try (PrintWriter out = response.getWriter()) {
-                        out.print(responseBuilder.build().toString());
-                    }
+                            .add("message", result); // Pass the error message from business layer
+                    try (PrintWriter out = response.getWriter()) { out.print(responseBuilder.build().toString()); }
                 }
-                
+
             } catch (Exception e) {
-                System.out.println("Error processing goal data: " + e.getMessage());
-                sendErrorResponse(response, "Error processing goal data", HttpServletResponse.SC_BAD_REQUEST);
+                 LOGGER.log(Level.SEVERE, "Error processing goal data: {0}", e.getMessage());
+                 sendErrorResponse(response, "Error processing goal data", HttpServletResponse.SC_BAD_REQUEST);
             }
-            
+
         } catch (Exception e) {
-            System.out.println("Error in GoalServlet doPost: " + e.getMessage());
-            sendErrorResponse(response, "Internal server error: " + e.getMessage(), 
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+             LOGGER.log(Level.SEVERE, "Error in GoalServlet doPost: {0}", e.getMessage());
+             sendErrorResponse(response, "Internal server error: " + e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
      * Send error response in JSON format
      */
-    private void sendErrorResponse(HttpServletResponse response, String message, int statusCode) 
-            throws IOException {
+    private void sendErrorResponse(HttpServletResponse response, String message, int statusCode) throws IOException {
         response.setStatus(statusCode);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
         JsonObjectBuilder responseBuilder = Json.createObjectBuilder()
                 .add("success", false)
                 .add("message", message);
-                
-        try (PrintWriter out = response.getWriter()) {
-            out.print(responseBuilder.build().toString());
+        try (PrintWriter out = response.getWriter()) { 
+            out.print(responseBuilder.build().toString()); 
         }
     }
+
     
     /**
      * Escape JSON strings
      */
     private String escapeJson(String input) {
-        if (input == null) {
-            return "";
-        }
-        return input.replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                    .replace("\n", "\\n")
-                    .replace("\r", "\\r")
-                    .replace("\t", "\\t");
-    }
+        if (input == null) return "";
+        return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
+                    .replace("\r", "\\r").replace("\t", "\\t");
+   }
 
     @Override
     public String getServletInfo() {
