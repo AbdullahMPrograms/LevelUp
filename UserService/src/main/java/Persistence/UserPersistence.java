@@ -104,7 +104,6 @@ public class UserPersistence {
                     newUserId = generatedKeys.getInt(1);
                     LOGGER.log(Level.INFO, "User created successfully with ID: {0}", newUserId);
 
-                    // ***** SEND KubeMQ MESSAGE HERE *****
                     try {
                         String message = String.format("CREATED:%d:%s:%s",
                                 newUserId,
@@ -114,12 +113,9 @@ public class UserPersistence {
                     } catch (IOException e) {
                         LOGGER.log(Level.SEVERE, "Failed to send KubeMQ message for new user {0}: {1}", 
                                 new Object[]{newUserId, e.getMessage()});
-                        // Decide if this failure should roll back the user creation or just be logged
                     }
-                    // ***** END KubeMQ MESSAGE SEND *****
                 } else {
                     LOGGER.log(Level.SEVERE, "Failed to retrieve generated key for new user.");
-                    // Handle error - maybe throw exception?
                 }
             } else {
                 LOGGER.log(Level.WARNING, "User creation failed - no rows affected.");

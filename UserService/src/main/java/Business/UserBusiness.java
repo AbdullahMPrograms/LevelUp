@@ -1,17 +1,15 @@
-// UserService/src/main/java/Business/UserBusiness.java
 package Business;
 
 import Helper.UserInfo;
 import Persistence.UserPersistence;
-import java.util.logging.Level; // Import Level
-import java.util.logging.Logger; // Import Logger
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Business logic for user operations
  */
 public class UserBusiness {
 
-    // Add a logger for better tracking
     private static final Logger LOGGER = Logger.getLogger(UserBusiness.class.getName());
 
 
@@ -44,7 +42,6 @@ public class UserBusiness {
      */
     public static String getUsernameByEmail(String email) {
         try {
-            // Reading with an empty password implies getting user by email only
             UserInfo user = UserPersistence.read(email, "");
             return (user != null) ? user.getUsername() : null;
         } catch (Exception e) {
@@ -60,31 +57,27 @@ public class UserBusiness {
      * @return Result message indicating success (with ID) or failure.
      */
     public static String createUser(UserInfo newUser) {
-        // 1. Basic Validation
+        // Basic Validation
         if (newUser == null || newUser.getUsername() == null || newUser.getEmail() == null || newUser.getPassword() == null ||
             newUser.getUsername().trim().isEmpty() || newUser.getEmail().trim().isEmpty() || newUser.getPassword().isEmpty()) {
              LOGGER.log(Level.WARNING, "User creation failed: Missing required user information.");
             return "Error: Missing required user information.";
         }
 
-        // 2. Log plain text password storage warning (as requested)
-        LOGGER.log(Level.WARNING, "*** Storing plain text password for user: {0} as requested for lab purposes. ***", newUser.getEmail());
-
-        // 3. Call Persistence Layer
+        // Call Persistence Layer
         LOGGER.log(Level.INFO, "Attempting to create user in persistence layer for email: {0}", newUser.getEmail());
         int newUserId = UserPersistence.create(newUser); // Call the method that returns int ID
 
-        // 4. Process Result and Return Message
         if (newUserId > 0) {
             // Success case
-            String successMessage = "user creation success with ID: " + newUserId; // Keep "success" for servlet check
+            String successMessage = "user creation success with ID: " + newUserId;
             LOGGER.log(Level.INFO, "User created successfully with ID: {0} (Email: {1})", new Object[]{newUserId, newUser.getEmail()});
             return successMessage;
         } else {
             // Failure case (newUserId is likely -1)
             String errorMessage = "Error: User creation failed. Possible duplicate email or database issue.";
             LOGGER.log(Level.WARNING, errorMessage + " (Email: {0})", newUser.getEmail());
-            return errorMessage; // Return a message that does NOT contain "success"
+            return errorMessage; 
         }
     }
 
@@ -106,7 +99,6 @@ public class UserBusiness {
      * @return User information if found, null otherwise
      */
     public static UserInfo getUserByEmail(String email) {
-        // Reading with an empty password implies getting user by email only
         return UserPersistence.read(email, "");
     }
 }

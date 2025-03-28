@@ -9,9 +9,9 @@ import java.io.IOException;
 public class Messaging {
 
     public static void sendMessage(String message) throws IOException {
-        String channelName = "user_creation_channel"; // Your channel name
-        String clientID = "user-service-publisher";    // Unique client ID
-        String kubeMQAddress = System.getenv("kubeMQAddress"); // Get from environment
+        String channelName = "user_creation_channel";
+        String clientID = "user-service-publisher";
+        String kubeMQAddress = System.getenv("kubeMQAddress");
 
          // Handle cases where the env variable might not be set (for local testing before upload to google cloud)
          if (kubeMQAddress == null || kubeMQAddress.isEmpty()) {
