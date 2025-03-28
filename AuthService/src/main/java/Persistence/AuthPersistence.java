@@ -10,154 +10,166 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.StringReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Data access model for authentication
+ * Data access model for authentication (communicates with UserService).
  */
 public class AuthPersistence {
-    
-    private static final String USER_SERVICE_URL = "http://localhost:8080/UserService/api/users";
-    
+
+    private static final Logger LOGGER = Logger.getLogger(AuthPersistence.class.getName());
+
+    // Get UserService location from environment variable with local default
+    private static final String USER_SERVICE_HOSTPORT = System.getenv("USER_SERVICE_HOSTPORT") != null ? System.getenv("USER_SERVICE_HOSTPORT") : "localhost:8080";
+    private static final String USER_SERVICE_BASE_URL = "http://" + USER_SERVICE_HOSTPORT + "/UserService";
+
+
     /**
-     * Call the UserService API to get user information
-     * 
+     * Call the UserService API to get user information by email.
+     *
      * @param email User email
      * @return JsonObject containing user data or null if not found/error
      */
     private static JsonObject getUserFromService(String email) {
+        HttpURLConnection conn = null;
+        String encodedEmail = "";
+        String targetUrlStr = "";
+
         try {
-            // URL encode the email parameter
-            String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8.toString());
-            URL url = new URL(USER_SERVICE_URL + "?email=" + encodedEmail);
-            
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            // Construct the target URL
+            encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8.toString());
+            targetUrlStr = USER_SERVICE_BASE_URL + "/api/users?email=" + encodedEmail;
+            URL url = new URL(targetUrlStr);
+            LOGGER.log(Level.INFO, "Calling UserService at: {0}", targetUrlStr);
+
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
-            
+
             int responseCode = conn.getResponseCode();
-            System.out.println("UserService API Response Code: " + responseCode);
-            
+            LOGGER.log(Level.INFO, "UserService GET response code: {0}", responseCode);
+
             if (responseCode == 200) { // Success
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String inputLine;
                 StringBuilder response = new StringBuilder();
-                
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    String inputLine;
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
                 }
-                in.close();
-                
+                 LOGGER.log(Level.FINE, "UserService GET response body: {0}", response.toString());
                 // Parse the JSON response
-                JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
-                JsonObject jsonObject = jsonReader.readObject();
-                jsonReader.close();
-                
-                return jsonObject;
+                try (JsonReader jsonReader = Json.createReader(new StringReader(response.toString()))) {
+                    return jsonReader.readObject();
+                }
             } else {
-                System.out.println("Failed to get user data from UserService");
+                 LOGGER.log(Level.WARNING, "Failed to get user data from UserService ({0}) for email: {1}", new Object[]{responseCode, email});
+                 // Optionally read error stream
                 return null;
             }
         } catch (Exception e) {
-            System.out.println("Error calling UserService API: " + e.getMessage());
-            e.printStackTrace();
+             LOGGER.log(Level.SEVERE, "Error calling UserService API at " + targetUrlStr, e);
             return null;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
     }
-    
+
     /**
-     * Verify user credentials by calling UserService API
-     * 
+     * Verify user credentials by calling UserService's /authenticate endpoint.
+     *
      * @param email User email
      * @param password User password
-     * @return Object array with [isAuthenticated, username] or null if error
+     * @return Object array with [isAuthenticated, username] or [false, null] if error/not authenticated.
      */
     public static Object[] authenticateUser(String email, String password) {
+        HttpURLConnection conn = null;
+        String targetUrlStr = "";
+         LOGGER.log(Level.INFO, "Authenticating user via UserService: {0}", email);
+
         try {
-            // Get user data from UserService
+            // First, ensure the user *exists* by fetching their data (includes username)
             JsonObject userData = getUserFromService(email);
-            
             if (userData == null || userData.containsKey("error")) {
-                System.out.println("User not found or error from UserService");
+                 LOGGER.log(Level.WARNING, "User not found via GET or error from UserService for email: {0}", email);
                 return new Object[] { false, null };
             }
-            
-            // Extract user information
-            String username = userData.getString("username");
-            
-            // Create a second API call to verify credentials
-            URL authUrl = new URL(USER_SERVICE_URL + "/authenticate");
-            HttpURLConnection conn = (HttpURLConnection) authUrl.openConnection();
+            // Extract username now, before the authentication call
+            String username = userData.getString("username", null); // Get username
+
+            // Now, call the /authenticate endpoint to verify the password
+            targetUrlStr = USER_SERVICE_BASE_URL + "/api/users/authenticate";
+            URL authUrl = new URL(targetUrlStr);
+             LOGGER.log(Level.INFO, "Calling UserService authentication endpoint: {0}", targetUrlStr);
+
+            conn = (HttpURLConnection) authUrl.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
-            
-            // Create JSON payload with email and password
+
+            // Create JSON payload
             String jsonPayload = Json.createObjectBuilder()
                 .add("email", email)
                 .add("password", password)
                 .build().toString();
-            
+
+            // Send payload
             conn.getOutputStream().write(jsonPayload.getBytes(StandardCharsets.UTF_8));
-            
+
             int responseCode = conn.getResponseCode();
-            System.out.println("Authentication API Response Code: " + responseCode);
-            
+             LOGGER.log(Level.INFO, "UserService POST /authenticate response code: {0}", responseCode);
+
             boolean isAuthenticated = false;
-            
             if (responseCode == 200) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String inputLine;
                 StringBuilder response = new StringBuilder();
-                
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    String inputLine;
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
                 }
-                in.close();
-                
+                 LOGGER.log(Level.FINE, "UserService POST /authenticate response body: {0}", response.toString());
                 // Parse the JSON response
-                JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
-                JsonObject authResponse = jsonReader.readObject();
-                jsonReader.close();
-                
-                isAuthenticated = authResponse.getBoolean("authenticated", false);
+                try (JsonReader jsonReader = Json.createReader(new StringReader(response.toString()))) {
+                    JsonObject authResponse = jsonReader.readObject();
+                    isAuthenticated = authResponse.getBoolean("authenticated", false);
+                }
+            } else {
+                 LOGGER.log(Level.WARNING, "Authentication check via UserService failed ({0}) for email: {1}", new Object[]{responseCode, email});
             }
-            
-            System.out.println("Authentication result for " + email + ": " + isAuthenticated);
-            return new Object[] { isAuthenticated, username };
-            
+
+             LOGGER.log(Level.INFO, "Authentication result for {0}: {1}", new Object[]{email, isAuthenticated});
+            // Return username only if authenticated
+            return new Object[] { isAuthenticated, (isAuthenticated ? username : null) };
+
         } catch (Exception e) {
-            System.out.println("Error authenticating user: " + e.getMessage());
-            e.printStackTrace();
-            return new Object[] { false, null };
+             LOGGER.log(Level.SEVERE, "Error during authenticateUser call to " + targetUrlStr, e);
+            return new Object[] { false, null }; // Indicate failure
+        } finally {
+             if (conn != null) {
+                 conn.disconnect();
+             }
         }
     }
-    
-    /**
-     * Get user information by email
-     * 
-     * @param email User email
-     * @return Object array with [userId, username, email] or null if not found
-     */
-    public static Object[] getUserByEmail(String email) {
-        try {
-            // Get user data from UserService
-            JsonObject userData = getUserFromService(email);
-            
-            if (userData == null || userData.containsKey("error")) {
-                return null;
-            }
-            
-            // Extract user information
-            int userId = userData.getInt("id");
-            String username = userData.getString("username");
-            String userEmail = userData.getString("email");
-            
-            return new Object[] { userId, username, userEmail };
-            
-        } catch (Exception e) {
-            System.out.println("Error getting user by email: " + e.getMessage());
-            return null;
-        }
-    }
+
+     // getUserByEmail method remains primarily for internal use within authenticateUser now
+     public static Object[] getUserByEmail(String email) {
+         JsonObject userData = getUserFromService(email);
+         if (userData == null || userData.containsKey("error")) {
+             return null;
+         }
+         try {
+             int userId = userData.getInt("id");
+             String username = userData.getString("username");
+             String userEmail = userData.getString("email");
+             return new Object[] { userId, username, userEmail };
+         } catch (Exception e) {
+             LOGGER.log(Level.SEVERE, "Error parsing user data from UserService response", e);
+             return null;
+         }
+     }
 }
