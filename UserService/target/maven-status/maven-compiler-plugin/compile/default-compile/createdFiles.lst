@@ -1,4 +1,5 @@
 Business\UserBusiness.class
 Helper\UserInfo.class
 UserServlet.class
+Business\Messaging.class
 Persistence\UserPersistence.class

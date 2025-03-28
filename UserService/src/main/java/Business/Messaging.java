@@ -1,0 +1,48 @@
+package Business;
+
+import io.kubemq.sdk.basic.ServerAddressNotSuppliedException;
+import io.kubemq.sdk.event.Event;
+import io.kubemq.sdk.tools.Converter;
+import javax.net.ssl.SSLException;
+import java.io.IOException;
+
+public class Messaging {
+
+    public static void sendMessage(String message) throws IOException {
+        String channelName = "user_creation_channel"; // Your channel name
+        String clientID = "user-service-publisher";    // Unique client ID
+        String kubeMQAddress = System.getenv("kubeMQAddress"); // Get from environment
+
+        // Handle cases where the env variable might not be set (for local testing)
+        if (kubeMQAddress == null || kubeMQAddress.isEmpty()) {
+            System.out.println("Warning: kubeMQAddress environment variable not set. Using default localhost:50000");
+            kubeMQAddress = "localhost:50000"; // Default for local KubeMQ instance
+        }
+        System.out.println("Sending message to KubeMQ at: " + kubeMQAddress + " on channel: " + channelName);
+
+        io.kubemq.sdk.event.Channel channel = null;
+        try {
+            channel = new io.kubemq.sdk.event.Channel(channelName, clientID, false, kubeMQAddress);
+            channel.setStore(true); // Store message if needed
+            Event event = new Event();
+            event.setBody(Converter.ToByteArray(message));
+            event.setEventId("event-store-" + clientID); // Optional: Unique event ID
+
+            channel.SendEvent(event);
+            System.out.println("Message sent successfully: " + message);
+
+        } catch (SSLException e) {
+            System.out.printf("SSLException: %s%n", e.getMessage());
+            e.printStackTrace();
+            throw new IOException("SSL Error sending message", e);
+        } catch (ServerAddressNotSuppliedException e) {
+            System.out.printf("ServerAddressNotSuppliedException: %s%n", e.getMessage());
+            e.printStackTrace();
+            throw new IOException("KubeMQ server address error", e);
+        } catch (Exception e) {
+            System.out.printf("General Exception sending message: %s%n", e.getMessage());
+            e.printStackTrace();
+            throw new IOException("Failed to send message", e);
+        }
+    }
+}

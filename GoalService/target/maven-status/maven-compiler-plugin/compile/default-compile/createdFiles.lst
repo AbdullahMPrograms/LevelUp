@@ -1,5 +1,9 @@
 Business\GoalBusiness.class
 Helper\GoalInfo.class
+Business\Messaging$1.class
+Business\MyAppServletContextListener$1.class
 Persistence\GoalPersistence.class
 Business\GoalServlet.class
+Business\Messaging.class
+Business\MyAppServletContextListener.class
 Persistence\UserPersistence.class

@@ -146,4 +146,41 @@ public class GoalPersistence {
         
         return goals;
     }
+
+    public static void saveUserInfoCache(int userId, String username, String email) throws SQLException, ClassNotFoundException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        System.out.println("Attempting to cache user info for UserID: {0}" + userId);
+
+        // Use INSERT ... ON DUPLICATE KEY UPDATE to handle both new and existing users
+        String query = "INSERT INTO USER_INFO_CACHE (USER_ID, USER_NAME, EMAIL) VALUES (?, ?, ?) " +
+                    "ON DUPLICATE KEY UPDATE USER_NAME = VALUES(USER_NAME), EMAIL = VALUES(EMAIL)";
+
+        try {
+            conn = getConnection(); // Use your existing getConnection method
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, userId);
+            stmt.setString(2, username);
+            stmt.setString(3, email);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Successfully cached/updated user info for UserID: {0}" + userId);
+            } else {
+                // This might happen with ON DUPLICATE KEY UPDATE if the data is identical
+                System.out.println("User info for UserID: {0} already up-to-date or insert failed." + userId);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("SQL Error caching user info for UserID {0}: {1}" + new Object[]{userId, e.getMessage()});
+            throw e; // Re-throw to be caught by the Messaging class
+        } catch (ClassNotFoundException e) {
+            System.out.println("Database Driver Error: {0}" + e.getMessage());
+            throw e; // Re-throw
+        } finally {
+            // Close resources
+            try { if (stmt != null) stmt.close(); } catch (SQLException e) { /* ignore */ }
+            try { if (conn != null) conn.close(); } catch (SQLException e) { /* ignore */ }
+        }
+    }
 }

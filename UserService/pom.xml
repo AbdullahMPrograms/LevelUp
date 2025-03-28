@@ -30,12 +30,26 @@
             <version>1.1.4</version>
         </dependency>
         
-        <!-- MySQL Connector -->
+        <!-- MySQL Driver -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.25</version>
+            <version>8.0.28</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.19.4</version>
+        </dependency>
+
+        <!-- KubeMQ Client -->
+        <dependency>
+            <groupId>io.kubemq.sdk</groupId>
+            <artifactId>kubemq-sdk-Java</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
     </dependencies>
     
     <build>

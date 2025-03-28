@@ -2,14 +2,14 @@ package Persistence;
 
 import Helper.UserInfo;
 import java.sql.*;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Data access model for user operations
  */
-public class UserPersistence {
-    
+public class UserPersistence {    
     private static final Logger LOGGER = Logger.getLogger(UserPersistence.class.getName());
     
     /**
@@ -22,9 +22,9 @@ public class UserPersistence {
             String user = "root";
             String password = "student123";
             
-            LOGGER.info("Attempting to connect to database...");
+            LOGGER.log(Level.INFO, "Attempting to connect to database...");
             Connection con = DriverManager.getConnection(url, user, password);
-            LOGGER.info("Connection established successfully.");
+            LOGGER.log(Level.INFO, "Connection established successfully.");
             return con;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "SQL Connection Error: {0}", e.getMessage());
@@ -70,49 +70,73 @@ public class UserPersistence {
 
         return bean;
     }
-    
+     
     /**
      * Create a new user
      */
-    public static String create(UserInfo newUser) {
-        String result = "";
-        
+    public static int create(UserInfo newUser) {
+        int newUserId = -1; // Default to -1 if creation fails
+        Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet generatedKeys = null;
+
         try {
-            Connection con = getCon();
+            con = getCon();
             if (con == null) {
-                LOGGER.severe("Connection is null");
-                return "Database connection failed";
+                LOGGER.log(Level.SEVERE, "Connection is null");
+                return newUserId;
             }
             
             // Use PreparedStatement to prevent SQL injection
             String q = "INSERT INTO USER (USER_NAME, PASSWORD, EMAIL) VALUES (?, ?, ?)";
-            try (PreparedStatement stmt = con.prepareStatement(q)) {
-                stmt.setString(1, newUser.getUsername());
-                stmt.setString(2, newUser.getPassword());
-                stmt.setString(3, newUser.getEmail());
-                
-                LOGGER.log(Level.INFO, "Creating user: {0}", newUser.getUsername());
-                
-                int rowsAffected = stmt.executeUpdate();
-                if (rowsAffected > 0) {
-                    result = "user creation success";
-                } else {
-                    result = "Failed to insert user";
-                }
-            }
+            stmt = con.prepareStatement(q, Statement.RETURN_GENERATED_KEYS); // Added flag
+            stmt.setString(1, newUser.getUsername());
+            stmt.setString(2, newUser.getPassword()); // Store the HASHED password!
+            stmt.setString(3, newUser.getEmail());
             
-            con.close();
+            LOGGER.log(Level.INFO, "Creating user: {0}", newUser.getUsername());
+            
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                // Get the generated USER_ID
+                generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    newUserId = generatedKeys.getInt(1);
+                    LOGGER.log(Level.INFO, "User created successfully with ID: {0}", newUserId);
+
+                    // ***** SEND KubeMQ MESSAGE HERE *****
+                    try {
+                        String message = String.format("CREATED:%d:%s:%s",
+                                newUserId,
+                                newUser.getUsername(),
+                                newUser.getEmail());
+                        Business.Messaging.sendMessage(message); // Call the messaging class
+                    } catch (IOException e) {
+                        LOGGER.log(Level.SEVERE, "Failed to send KubeMQ message for new user {0}: {1}", 
+                                new Object[]{newUserId, e.getMessage()});
+                        // Decide if this failure should roll back the user creation or just be logged
+                    }
+                    // ***** END KubeMQ MESSAGE SEND *****
+                } else {
+                    LOGGER.log(Level.SEVERE, "Failed to retrieve generated key for new user.");
+                    // Handle error - maybe throw exception?
+                }
+            } else {
+                LOGGER.log(Level.WARNING, "User creation failed - no rows affected.");
+            }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "SQL Error: {0}", e.getMessage());
-            result = "Error: " + e.getMessage();
+            LOGGER.log(Level.SEVERE, "SQL Error creating user: {0}", e.getMessage());
         } catch (ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, "Driver Error: {0}", e.getMessage());
-            result = "Error: Driver not found";
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Unexpected Error: {0}", e.getMessage());
-            result = "Error: Unexpected error occurred";
+            LOGGER.log(Level.SEVERE, "Unexpected Error creating user: {0}", e.getMessage());
+        } finally {
+            // Close resources (generatedKeys, stmt, con)
+            try { if (generatedKeys != null) generatedKeys.close(); } catch (SQLException e) { /* ignore */ }
+            try { if (stmt != null) stmt.close(); } catch (SQLException e) { /* ignore */ }
+            try { if (con != null) con.close(); } catch (SQLException e) { /* ignore */ }
         }
-        return result;
+        return newUserId; // Return the ID (or -1 on failure)
     }
     
     /**

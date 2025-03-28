@@ -1,13 +1,20 @@
+// UserService/src/main/java/Business/UserBusiness.java
 package Business;
 
 import Helper.UserInfo;
 import Persistence.UserPersistence;
+import java.util.logging.Level; // Import Level
+import java.util.logging.Logger; // Import Logger
 
 /**
  * Business logic for user operations
  */
 public class UserBusiness {
-        
+
+    // Add a logger for better tracking
+    private static final Logger LOGGER = Logger.getLogger(UserBusiness.class.getName());
+
+
     /**
      * Verifies if a user is authenticated based on email and password
      * 
@@ -28,50 +35,78 @@ public class UserBusiness {
             return false;
         }
     }
-    
+
     /**
      * Gets the username associated with an email address
-     * 
+     *
      * @param email User's email address
      * @return username if found, null otherwise
      */
     public static String getUsernameByEmail(String email) {
         try {
+            // Reading with an empty password implies getting user by email only
             UserInfo user = UserPersistence.read(email, "");
             return (user != null) ? user.getUsername() : null;
         } catch (Exception e) {
-            System.out.println("Error retrieving username: {0}" + e.getMessage());
+             LOGGER.log(Level.SEVERE, "Error retrieving username for email " + email + ": {0}", e.getMessage());
             return null;
         }
     }
-    
+
     /**
-     * Creates a new user
-     * 
-     * @param newUser User information to create
-     * @return Result message of the creation attempt
+     * Creates a new user with a plain text password and returns a status message.
+     *
+     * @param newUser User information to create (with plain text password).
+     * @return Result message indicating success (with ID) or failure.
      */
     public static String createUser(UserInfo newUser) {
-        return UserPersistence.create(newUser);
+        // 1. Basic Validation
+        if (newUser == null || newUser.getUsername() == null || newUser.getEmail() == null || newUser.getPassword() == null ||
+            newUser.getUsername().trim().isEmpty() || newUser.getEmail().trim().isEmpty() || newUser.getPassword().isEmpty()) {
+             LOGGER.log(Level.WARNING, "User creation failed: Missing required user information.");
+            return "Error: Missing required user information.";
+        }
+
+        // 2. Log plain text password storage warning (as requested)
+        LOGGER.log(Level.WARNING, "*** Storing plain text password for user: {0} as requested for lab purposes. ***", newUser.getEmail());
+
+        // 3. Call Persistence Layer
+        LOGGER.log(Level.INFO, "Attempting to create user in persistence layer for email: {0}", newUser.getEmail());
+        int newUserId = UserPersistence.create(newUser); // Call the method that returns int ID
+
+        // 4. Process Result and Return Message
+        if (newUserId > 0) {
+            // Success case
+            String successMessage = "user creation success with ID: " + newUserId; // Keep "success" for servlet check
+            LOGGER.log(Level.INFO, "User created successfully with ID: {0} (Email: {1})", new Object[]{newUserId, newUser.getEmail()});
+            return successMessage;
+        } else {
+            // Failure case (newUserId is likely -1)
+            String errorMessage = "Error: User creation failed. Possible duplicate email or database issue.";
+            LOGGER.log(Level.WARNING, errorMessage + " (Email: {0})", newUser.getEmail());
+            return errorMessage; // Return a message that does NOT contain "success"
+        }
     }
-    
+
+
     /**
      * Gets user by ID
-     * 
+     *
      * @param userId User ID
      * @return User information if found, null otherwise
      */
     public static UserInfo getUserById(int userId) {
         return UserPersistence.getUserById(userId);
     }
-    
+
     /**
      * Gets user by email
-     * 
+     *
      * @param email User's email
      * @return User information if found, null otherwise
      */
     public static UserInfo getUserByEmail(String email) {
+        // Reading with an empty password implies getting user by email only
         return UserPersistence.read(email, "");
     }
 }
