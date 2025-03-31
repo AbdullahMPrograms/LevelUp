@@ -71,7 +71,7 @@ public class UserPersistence {
         try{
             con = getCon(); // Get connection using the updated method
 
-            String q = "Select * FROM `USER` WHERE EMAIL = ?"; // Fetch user by email
+            String q = "Select * FROM `user` WHERE EMAIL = ?"; // Fetch user by email
             stmt = con.prepareStatement(q);
             stmt.setString(1, email);
             rs = stmt.executeQuery();
@@ -108,14 +108,38 @@ public class UserPersistence {
         ResultSet generatedKeys = null;
 
         try {
-            con = getCon();
+            con = getCon(); // Assume this works based on previous logs
             LOGGER.log(Level.INFO, "Creating user: {0}", newUser.getUsername());
-            String q = "INSERT INTO USER (USER_NAME, PASSWORD, EMAIL) VALUES (?, ?, ?)";
+    
+            // ********** DEBUGGING POINT 1: Log the exact query **********
+            // Make sure this query uses the table name case matching your LATEST userdb.sql
+            // If userdb.sql uses CREATE TABLE `USER`, this should be USER.
+            // If userdb.sql uses CREATE TABLE `user`, this should be user.
+            // Let's assume you tried uppercase USER most recently:
+            String q = "INSERT INTO `user` (USER_NAME, PASSWORD, EMAIL) VALUES (?, ?, ?)";
+            LOGGER.log(Level.INFO, "[DEBUG] Executing SQL: {0}", q);
+            // ***********************************************************
+    
             stmt = con.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, newUser.getUsername());
-            stmt.setString(2, newUser.getPassword()); 
+            stmt.setString(2, newUser.getPassword());
             stmt.setString(3, newUser.getEmail());
-
+    
+            // ********** DEBUGGING POINT 2: Check connection validity **********
+            boolean isConnectionValid = false;
+            try {
+                 isConnectionValid = con.isValid(2); // Check validity with a 2-second timeout
+                 LOGGER.log(Level.INFO, "[DEBUG] Connection valid before executeUpdate: {0}", isConnectionValid);
+            } catch (SQLException validationEx) {
+                 LOGGER.log(Level.WARNING,"[DEBUG] Error checking connection validity: " + validationEx.getMessage());
+            }
+            if (!isConnectionValid) {
+                 LOGGER.log(Level.SEVERE, "[DEBUG] Connection is NOT valid right before executeUpdate!");
+                 // Optionally attempt reconnect or throw specific exception
+                 // For now, just log and let the executeUpdate fail as it would
+            }
+            // **************************************************************
+    
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
                 generatedKeys = stmt.getGeneratedKeys();
@@ -139,7 +163,7 @@ public class UserPersistence {
                  LOGGER.log(Level.WARNING, "User creation failed - no rows affected.");
             }
         } catch (Exception e) { // Catch broader Exception for getCon() issues too
-             LOGGER.log(Level.SEVERE, "Error creating user: {0}", e.getMessage());
+             LOGGER.log(Level.SEVERE, "Error creating user ("+e.getClass().getName()+"): {0}", e.getMessage());
         } finally {
              // Close resources in finally block
              try { if (generatedKeys != null) generatedKeys.close(); } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Error closing GeneratedKeys", e);}
@@ -160,7 +184,7 @@ public class UserPersistence {
 
         try {
             con = getCon();
-            String query = "SELECT USER_ID, USER_NAME, EMAIL FROM USER WHERE USER_ID = ?"; 
+            String query = "SELECT USER_ID, USER_NAME, EMAIL FROM `user` WHERE USER_ID = ?"; 
             stmt = con.prepareStatement(query);
             stmt.setInt(1, userId);
             rs = stmt.executeQuery();

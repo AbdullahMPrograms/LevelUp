@@ -68,7 +68,7 @@ public class GoalPersistence {
 
         try {
             conn = getConnection(); 
-            String query = "INSERT INTO GOAL (USER_ID, GOAL_TITLE, TARGET_DATE, METRIC_TYPE, TARGET_VALUE, TARGET_UNIT, FREQUENCY, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO `goal` (USER_ID, GOAL_TITLE, TARGET_DATE, METRIC_TYPE, TARGET_VALUE, TARGET_UNIT, FREQUENCY, DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(query);
             stmt.setInt(1, newGoal.getUserID());
             stmt.setString(2, newGoal.getTitle());
@@ -118,7 +118,7 @@ public class GoalPersistence {
 
         try {
             conn = getConnection(); // Use updated method
-            String query = "SELECT * FROM GOAL WHERE USER_ID = ?";
+            String query = "SELECT * FROM `goal` WHERE USER_ID = ?";
             stmt = conn.prepareStatement(query);
             stmt.setInt(1, userID);
 
@@ -168,12 +168,12 @@ public class GoalPersistence {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        LOGGER.log(Level.INFO, "Querying USER_INFO_CACHE for email: {0}", email);
+        LOGGER.log(Level.INFO, "Querying user_info_cache for email: {0}", email);
 
-        String query = "SELECT USER_ID FROM USER_INFO_CACHE WHERE EMAIL = ?";
+        String query = "SELECT USER_ID FROM `user_info_cache` WHERE EMAIL = ?";
 
         try {
-            conn = getConnection(); // Use updated method
+            conn = getConnection();
             stmt = conn.prepareStatement(query);
             stmt.setString(1, email);
 
@@ -209,7 +209,7 @@ public class GoalPersistence {
         LOGGER.log(Level.INFO, "Attempting to cache user info for UserID: {0}", userId);
 
         // Use INSERT ... ON DUPLICATE KEY UPDATE to handle both new and existing users
-        String query = "INSERT INTO USER_INFO_CACHE (USER_ID, USER_NAME, EMAIL) VALUES (?, ?, ?) " +
+        String query = "INSERT INTO `user_info_cache` (USER_ID, USER_NAME, EMAIL) VALUES (?, ?, ?) " +
                        "ON DUPLICATE KEY UPDATE USER_NAME = VALUES(USER_NAME), EMAIL = VALUES(EMAIL)";
 
         try {

@@ -1,4 +1,3 @@
-// GoalService/src/main/java/Business/Messaging.java
 package Business;
 
 import io.kubemq.sdk.basic.ServerAddressNotSuppliedException;
